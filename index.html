@@ -72,8 +72,25 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-bo
 .instr{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;flex:none;min-height:62px}
 .instr .txt{flex:1;min-width:240px}
 .eyebrow2{font-family:var(--font-head);font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.eyerow{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.eyerow .eyebrow2{margin-bottom:0}
 .prompt{font-size:17.5px;line-height:1.45;font-weight:600;color:var(--ink);max-width:60ch}
 .prompt b{font-weight:800}
+/* info button + popover (used to explain the "machine" idea) */
+.infobtn{flex:none;width:22px;height:22px;padding:0;display:none;align-items:center;justify-content:center;border-radius:50%;border:1.5px solid var(--action);background:var(--action-tint);color:var(--action);font-family:var(--font-head);font-weight:700;font-size:13px;line-height:1;cursor:pointer;transition:background .15s var(--ease),transform .15s var(--ease)}
+.infobtn.show{display:inline-flex}
+.infobtn:hover{background:#D8E6FC;transform:translateY(-1px)}
+.infobtn:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+.infopop{position:relative;margin:10px 0 2px;max-width:60ch;background:var(--surface);border:1.5px solid var(--action);border-radius:14px;padding:14px 16px 15px;box-shadow:0 6px 20px rgba(23,35,59,.08)}
+.infopop[hidden]{display:none}
+.infopop .ipt{font-family:var(--font-head);font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--action);margin-bottom:6px}
+.infopop p{margin:0 0 8px;font-size:14.5px;line-height:1.55;font-weight:600;color:var(--ink-soft)}
+.infopop p:last-child{margin-bottom:0}
+.infopop b{font-weight:800;color:var(--ink)}
+.infopop .ipx{position:absolute;top:8px;right:10px;border:none;background:none;color:var(--muted);font-size:18px;line-height:1;cursor:pointer;padding:2px 4px}
+.infopop .ipx:hover{color:var(--ink)}
+.prompt .hint-i{font-weight:600;color:var(--action)}
+.prompt .hint-i b{font-weight:800;color:var(--action)}
 .task{display:inline-flex;align-items:center;gap:10px;background:var(--guess-tint);border:1.5px solid var(--guess);border-radius:14px;padding:8px 14px;transform:rotate(-1.2deg)}
 .task[hidden]{display:none}
 .task .tlb{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--guess-dark);white-space:nowrap}
@@ -345,8 +362,18 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-bo
 
   <div class="instr">
     <div class="txt">
-      <div class="eyebrow2" id="stepEyebrow"></div>
+      <div class="eyerow">
+        <div class="eyebrow2" id="stepEyebrow"></div>
+        <button class="infobtn" id="infoBtn" type="button" aria-label="What is a matrix?" aria-expanded="false">i</button>
+      </div>
       <div class="prompt" id="stepPrompt"></div>
+      <div class="infopop" id="infoPop" role="note" hidden>
+        <button class="ipx" id="infoClose" type="button" aria-label="Close">&times;</button>
+        <div class="ipt">Think of it as a machine</div>
+        <p>A matrix is just a little <b>machine that reshapes space</b>. You feed the whole plane in; it stretches, squishes, rotates, or flips it &mdash; and spits the reshaped version out.</p>
+        <p>Right now it&rsquo;s set to <b class="ci">(1, 0)</b> / <b class="cj">(0, 1)</b> &mdash; the <b>do-nothing machine</b>. Everything comes out exactly as it went in.</p>
+        <p>Grab the two arrows and drag. Wherever you drop them <i>becomes</i> the new machine, and the whole picture bends to match. Same idea, endless shapes.</p>
+      </div>
     </div>
     <div class="task" id="task" hidden>
       <span class="tlb">Your task</span><span class="ttx" id="taskText"></span>
@@ -1152,8 +1179,28 @@ var dotsEl = $('dots'), eyebrowEl = $('stepEyebrow'), promptEl = $('stepPrompt')
 var taskEl = $('task'), taskText = $('taskText');
 var stripEl = $('strip');
 var feedEl = $('feed'), goBtn = $('goBtn');
+var infoBtn = $('infoBtn'), infoPop = $('infoPop'), infoClose = $('infoClose');
 var qwrap = $('qwrap'), qEyebrow = $('qEyebrow'), qText = $('qText'), qGal = $('qGal'), qOpts = $('qOpts'), qFeed = $('qFeed');
 var landing = $('landing');
+
+/* the info button reveals a short "matrix = machine" explainer.
+   Steps opt in via showInfo(true); every step transition resets it. */
+function showInfo(on) {
+  infoBtn.classList.toggle('show', !!on);
+  if (!on) closeInfo();
+}
+function openInfo() {
+  infoPop.hidden = false;
+  infoBtn.setAttribute('aria-expanded', 'true');
+}
+function closeInfo() {
+  infoPop.hidden = true;
+  infoBtn.setAttribute('aria-expanded', 'false');
+}
+infoBtn.addEventListener('click', function () {
+  if (infoPop.hidden) openInfo(); else closeInfo();
+});
+infoClose.addEventListener('click', closeInfo);
 
 var DOT_LABELS = ['Play', 'Match', 'Reveal', 'Order', 'Undo', 'Checkpoint', 'Recipe', 'Multiply', 'Compose', 'Measure', 'Formula', 'Connect'];
 var NSTEPS = 12;
@@ -1380,9 +1427,10 @@ var step3 = {
     });
     vgGo(IDENTITY);
     setStepText('Step 3 · Reveal',
-      'Those four numbers are a <b>matrix</b> &mdash; the machine you&rsquo;ve been driving. Each column is one arrow: drag and watch.',
+      'Those four numbers are a <b>matrix</b> &mdash; the little <b>machine</b> you&rsquo;ve been driving. It reshapes the whole plane at once. Each column is one arrow: drag and watch. <span class="hint-i">Tap the <b>i</b> to see how it works.</span>',
       'Set &icirc; to <b class="ci">(0, 1)</b> and &jcirc; to <b class="cj">(1, 0)</b>.');
-    feed('');
+    showInfo(true);
+    feed('Feel free to play around &mdash; stretch, squish, spin it and get a feel for the machine before moving on.');
     setButton('Continue', false, advance);
   },
   onState: function (s) {
@@ -2870,6 +2918,7 @@ function enterStep(i) {
   stripEl.hidden = true;
   stripEl.textContent = '';
   goBtn.style.display = '';
+  showInfo(false);
   /* baseline the component so per-step configs stay minimal */
   vg.clearWalk();
   vg.overlay(null);
