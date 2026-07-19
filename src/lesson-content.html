@@ -1,0 +1,2993 @@
+<style>
+/* ---- By Hand design language v0.1 — fonts (variable, inlined) ---- */
+@font-face{
+  font-family:'Manrope';font-style:normal;font-weight:200 800;font-display:swap;
+  src:url(data:font/woff2;base64,%%MANROPE_LATIN%%) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Manrope';font-style:normal;font-weight:200 800;font-display:swap;
+  src:url(data:font/woff2;base64,%%MANROPE_EXT%%) format('woff2');
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face{
+  font-family:'Space Grotesk';font-style:normal;font-weight:300 700;font-display:swap;
+  src:url(data:font/woff2;base64,%%GROTESK_LATIN%%) format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face{
+  font-family:'Space Grotesk';font-style:normal;font-weight:300 700;font-display:swap;
+  src:url(data:font/woff2;base64,%%GROTESK_EXT%%) format('woff2');
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+
+/* ---- tokens ---- */
+:root{
+  --paper:#FBF7EF; --surface:#FFFFFF; --line:#E7DFD2;
+  --ink:#17233B; --ink-soft:#4A5568; --muted:#9C8F7A;
+  --track:#EFE8DB; --dot-rest:#D9CFBE;
+  --action:#2F6BE4; --action-tint:#E7EFFD;
+  --guess:#F5CE4E; --guess-tint:#FCF3D6; --guess-dark:#A88A1E;
+  --green:#12A66B; --green-tint:#E1F4EC; --green-dark:#0B7A4F;
+  --coral:#EE6C4D; --coral-tint:#FCE7DE; --coral-dark:#C64522;
+  --slate:#7C93AD; --slate-tint:#ECF1F6; --slate-dark:#5A7291;
+  --berry:#C4436A; --berry-tint:#F7E3EC; --berry-dark:#9E2E53;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --font-head:'Space Grotesk',sans-serif;
+  --font-body:'Manrope',-apple-system,BlinkMacSystemFont,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;overflow:hidden}
+
+/* ---- app shell: everything fits one screen ---- */
+.app{height:100vh;height:100dvh;max-width:960px;margin:0 auto;padding:12px 18px 14px;display:flex;flex-direction:column;gap:10px}
+@media (max-height:520px){
+  body{overflow:auto}
+  .app{height:auto;min-height:520px}
+}
+
+/* ---- progress dots ---- */
+.dots{display:flex;align-items:center;justify-content:center;flex:none}
+.dstep{display:flex;align-items:center;gap:7px;background:none;border:0;padding:0;margin:0;font:inherit;cursor:pointer}
+.dstep.cur{cursor:default}
+.dstep:hover:not(.cur) .dcirc{box-shadow:0 0 0 3px var(--line)}
+.dstep:focus-visible{outline:none}
+.dstep:focus-visible .dcirc{box-shadow:0 0 0 4px var(--action-tint)}
+.dcirc{width:26px;height:26px;border-radius:50%;background:var(--track);color:var(--muted);font-family:var(--font-head);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex:none;transition:background .25s var(--ease),box-shadow .25s var(--ease)}
+.dstep.cur .dcirc{background:var(--action);color:#fff;box-shadow:0 0 0 4px var(--action-tint)}
+.dstep.done .dcirc{background:var(--green)}
+.dcheck{width:10px;height:6px;border-left:2.5px solid #fff;border-bottom:2.5px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
+.dlabel{display:none;font-size:12.5px;font-weight:800;color:var(--ink)}
+.dstep.cur .dlabel{display:inline}
+.dline{width:18px;height:2px;background:var(--line);margin:0 7px;flex:none;transition:background .25s var(--ease)}
+.dline.done{background:var(--green)}
+.dsplit{width:2.5px;height:16px;background:var(--dot-rest);border-radius:2px;margin:0 9px;flex:none}
+
+/* ---- instruction row ---- */
+.instr{display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;flex:none;min-height:62px}
+.instr .txt{flex:1;min-width:240px}
+.eyebrow2{font-family:var(--font-head);font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.prompt{font-size:17.5px;line-height:1.45;font-weight:600;color:var(--ink);max-width:60ch}
+.prompt b{font-weight:800}
+.task{display:inline-flex;align-items:center;gap:10px;background:var(--guess-tint);border:1.5px solid var(--guess);border-radius:14px;padding:8px 14px;transform:rotate(-1.2deg)}
+.task[hidden]{display:none}
+.task .tlb{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--guess-dark);white-space:nowrap}
+.task .ttx{font-size:14.5px;font-weight:700;color:var(--ink)}
+
+/* ---- step strip (presets, snapshots, checklists, hints) ---- */
+.strip{display:flex;flex-wrap:wrap;gap:10px;align-items:center;flex:none}
+.strip[hidden]{display:none}
+.strip .sp{flex:1}
+.btn-2nd{font-family:var(--font-body);font-weight:700;font-size:14.5px;color:var(--ink);background:var(--surface);border:1.5px solid var(--ink);border-radius:12px;padding:9px 16px;min-height:44px;cursor:pointer;transition:background .15s var(--ease),transform .15s var(--ease)}
+.btn-2nd:hover:not(:disabled){background:var(--paper)}
+.btn-2nd:active:not(:disabled){transform:scale(.97)}
+.btn-2nd:disabled{color:var(--muted);border-color:var(--line);cursor:default}
+.snapslot{display:inline-flex;align-items:center;gap:8px;border:1.5px dashed var(--line);border-radius:12px;padding:4px 12px 4px 4px;min-height:52px;font-size:12.5px;font-weight:700;color:var(--muted);background:transparent}
+.snapslot.filled{border-style:solid;background:var(--surface);color:var(--ink-soft)}
+.snapslot svg{width:44px;height:44px;display:block}
+.snapslot .cap{max-width:12ch;line-height:1.25}
+.tpill{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-size:13px;font-weight:700;color:var(--muted)}
+.tpill .tdot{width:9px;height:9px;border-radius:50%;background:var(--line);flex:none}
+.tpill.cur{border-color:var(--action);background:var(--action-tint);color:var(--ink)}
+.tpill.cur .tdot{background:var(--action)}
+.tpill.done{border-color:var(--green);background:var(--green-tint);color:var(--green-dark)}
+.tpill.done .tdot{background:var(--green)}
+
+/* ---- canvas zone ---- */
+.zone{flex:1;min-height:0;position:relative;display:flex}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.vgcard{flex:1;display:flex;flex-direction:column;min-height:0}
+.vgcard>div{flex:1;display:flex;flex-direction:column;min-height:0}
+
+/* ---- vector grid component ---- */
+.vg{flex:1;display:flex;flex-direction:column;min-height:0}
+.vg-top{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;padding:12px 14px 0;flex:none}
+.vg-top[hidden],.vg-matrix[hidden],.vg-chip[hidden]{display:none}
+.vg-stage{flex:1;min-height:0;padding:2px 6px}
+.vg-svg{display:block;width:100%;height:100%;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+
+.vg-matrix{display:inline-flex;align-items:stretch;gap:7px}
+.vg-matrix .br{width:9px;border:2.5px solid var(--ink)}
+.vg-matrix .br.l{border-right:0;border-radius:7px 0 0 7px}
+.vg-matrix .br.r{border-left:0;border-radius:0 7px 7px 0}
+.vg-mgrid{display:grid;grid-template-columns:auto auto;column-gap:18px;row-gap:2px;padding:5px 2px;font-family:var(--font-head);font-weight:700;font-size:20px;line-height:1.15;font-variant-numeric:tabular-nums}
+.vg-mgrid span{min-width:3.4ch;text-align:center}
+.vg-mgrid .ci{color:var(--coral-dark)}
+.vg-mgrid .cj{color:var(--action)}
+
+.vg-chip{display:inline-flex;align-items:center;gap:12px;background:var(--guess-tint);border:1.5px solid var(--guess);border-radius:14px;padding:6px 16px;transform:rotate(-1.2deg);transition:background .2s var(--ease),border-color .2s var(--ease)}
+.vg-chip .lb{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--guess-dark);transition:color .2s var(--ease)}
+.vg-chip .val{font-family:var(--font-head);font-weight:700;font-size:24px;line-height:1.05;min-width:3.2ch;text-align:center;font-variant-numeric:tabular-nums}
+.vg-chip.neg{background:var(--berry-tint);border-color:var(--berry)}
+.vg-chip.neg .lb{color:var(--berry-dark)}
+
+.vg-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;border-top:1px solid var(--line);flex-wrap:wrap;flex:none}
+.vg-toolbar[hidden]{display:none}
+
+.pill{position:relative;display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-family:var(--font-body);font-weight:700;font-size:14px;color:var(--ink-soft);cursor:pointer;user-select:none;transition:border-color .15s var(--ease),background .15s var(--ease),color .15s var(--ease)}
+.pill input{position:absolute;opacity:0;pointer-events:none}
+.pill .dot{width:10px;height:10px;border-radius:50%;background:var(--line);flex:none;transition:background .15s var(--ease)}
+.pill.on{background:var(--action-tint);border-color:var(--action);color:var(--ink)}
+.pill.on .dot{background:var(--action)}
+.pill:focus-within{outline:2px solid var(--action);outline-offset:2px}
+
+.vg-reset{font-family:var(--font-body);font-weight:700;font-size:15px;color:var(--ink);background:var(--surface);border:1.5px solid var(--ink);border-radius:12px;padding:9px 18px;min-height:44px;cursor:pointer;transition:background .15s var(--ease),transform .15s var(--ease)}
+.vg-reset:hover{background:var(--paper)}
+.vg-reset:active{transform:scale(.97)}
+
+.vg-hit{cursor:grab}
+.vg-arrow.drag .vg-hit{cursor:grabbing}
+.vg-hit:focus{outline:none}
+.vg-halo{transform-box:fill-box;transform-origin:center;transition:transform .2s var(--ease)}
+.vg-arrow.pulse .vg-halo{animation:vg-pulse 1.9s var(--ease) 3}
+.vg-arrow.drag .vg-halo{transform:scale(1.3)}
+@keyframes vg-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
+@media (prefers-reduced-motion:reduce){
+  .vg-arrow.pulse .vg-halo{animation:none}
+  .vg-halo{transition:none}
+}
+
+/* ---- question overlay ---- */
+.qwrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(251,247,239,.82);border-radius:18px;z-index:5}
+.qwrap[hidden]{display:none}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;max-width:540px;width:100%;max-height:100%;overflow:auto;box-shadow:0 18px 44px -22px rgba(23,35,59,.35)}
+.qtext{font-size:16.5px;line-height:1.5;font-weight:600;margin:2px 0 14px}
+.qtext b{font-weight:800}
+.qgal{display:flex;gap:16px;justify-content:center;margin:2px 0 14px}
+.qgal[hidden]{display:none}
+.qgal figure{margin:0;text-align:center}
+.qgal svg{width:96px;height:96px;display:block;margin:0 auto}
+.qgal figcaption{font-size:12px;font-weight:700;color:var(--ink-soft);margin-top:5px;max-width:14ch}
+.qopts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.qopts[hidden]{display:none}
+.qopts.list{grid-template-columns:1fr}
+.qopt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 6px;border:1.5px solid var(--line);border-radius:14px;background:var(--surface);cursor:pointer;font-family:var(--font-body);font-size:12.5px;font-weight:700;color:var(--ink-soft);transition:border-color .15s var(--ease),box-shadow .15s var(--ease),opacity .2s var(--ease)}
+.qopts.list .qopt{flex-direction:row;justify-content:flex-start;text-align:left;font-size:14px;padding:12px 14px;min-height:44px}
+.qopt:hover:not(:disabled){border-color:var(--action)}
+.qopt:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+.qopt:disabled{cursor:default;opacity:.45}
+.qopt.chosen{opacity:1}
+.qopt.sel-right{border-color:var(--green);box-shadow:0 0 0 3px var(--green-tint)}
+.qopt.sel-wrong{border-color:var(--coral);box-shadow:0 0 0 3px var(--coral-tint)}
+.qprev svg{display:block;width:88px;height:88px}
+.qfeed{min-height:24px;margin-top:12px;font-size:14.5px;line-height:1.5;font-weight:600;color:var(--ink-soft)}
+.qfeed.ok{color:var(--green-dark)}
+.qfeed.warn{color:var(--coral-dark)}
+
+/* ---- landing (step 7) ---- */
+.endwrap{position:absolute;inset:0;background:var(--paper);display:flex;align-items:center;justify-content:center;border-radius:18px;z-index:6}
+.endwrap[hidden]{display:none}
+.endcard{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px 30px;max-width:620px;max-height:100%;overflow:auto;text-align:left}
+.endcard h2{font-family:var(--font-head);font-weight:600;font-size:26px;letter-spacing:-.02em;margin:6px 0 10px}
+.endcard p{font-size:15px;line-height:1.6;color:var(--ink-soft);margin:0 0 18px}
+/* compact finale variant: wider + tighter so the recap fits without scroll */
+.endcard.c2{max-width:780px;padding:18px 26px}
+.endcard.c2 h2{font-size:22px;margin:3px 0 8px}
+.endcard.c2 p{font-size:14px;line-height:1.5;margin:0 0 10px}
+.disc{list-style:none;margin:0 0 12px;padding:0}
+.disc li{position:relative;padding:0 0 10px 26px;font-size:14.5px;line-height:1.5;color:var(--ink);font-weight:600}
+.disc li::before{content:'';position:absolute;left:2px;top:6px;width:11px;height:11px;border-radius:50%}
+.disc li:nth-child(1)::before{background:var(--coral)}
+.disc li:nth-child(2)::before{background:var(--action)}
+.disc li:nth-child(3)::before{background:var(--slate)}
+.disc li:nth-child(4)::before{background:var(--guess)}
+.disc li:nth-child(5)::before{background:var(--berry)}
+.btn-text{font-family:var(--font-body);font-weight:700;font-size:15px;color:var(--action);background:transparent;border:none;padding:8px 6px;min-height:44px;cursor:pointer}
+
+/* ---- bottom bar ---- */
+.bbar{display:flex;align-items:center;gap:14px;flex:none;min-height:52px}
+.feed{flex:1;min-width:0;font-size:15px;line-height:1.45;font-weight:600;color:var(--ink-soft)}
+.feed.ok{color:var(--green-dark)}
+.feed.warn{color:var(--coral-dark)}
+.feed b{font-weight:800}
+.feed .ci,.qtext .ci,.qfeed .ci,.task .ci,.prompt .ci,.rec .ci{color:var(--coral-dark)}
+.feed .cj,.qtext .cj,.qfeed .cj,.task .cj,.prompt .cj,.rec .cj{color:var(--action)}
+.okdot{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);margin-right:7px}
+.btn-go{font-family:var(--font-body);font-weight:700;font-size:16px;color:#fff;background:var(--action);border:1.5px solid transparent;border-radius:12px;padding:12px 26px;min-height:48px;cursor:pointer;box-shadow:0 6px 16px -6px rgba(47,107,228,.6);transition:transform .15s var(--ease),box-shadow .15s var(--ease);flex:none}
+.btn-go:disabled{background:var(--surface);color:var(--muted);border-color:var(--line);box-shadow:none;cursor:default}
+.btn-go:not(:disabled):active{transform:scale(.97)}
+.btn-go:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+
+/* ---- numeric answers (Part 2) ---- */
+.ansrow{display:inline-flex;align-items:center;gap:2px;font-family:var(--font-head);font-weight:700;font-size:20px;color:var(--ink-soft)}
+.numin{width:64px;min-height:44px;text-align:center;font-family:var(--font-head);font-weight:700;font-size:18px;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:6px;margin:0 5px;font-variant-numeric:tabular-nums}
+.numin:focus{outline:none;border-color:var(--action);box-shadow:0 0 0 3px var(--action-tint)}
+.numin.bad{border-color:var(--coral);box-shadow:0 0 0 3px var(--coral-tint)}
+.numin:disabled{background:var(--paper);color:var(--muted)}
+.btn-check{padding:10px 22px;min-height:44px;font-size:15px}
+.btn-pm{padding:9px 14px;min-height:44px;min-width:44px}
+.ledg{display:inline-flex;align-items:center;min-height:38px;padding:6px 13px;border-radius:999px;border:1.5px solid;font-family:var(--font-head);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+.ledg.i{background:var(--coral-tint);border-color:var(--coral);color:var(--coral-dark)}
+.ledg.j{background:var(--action-tint);border-color:var(--action);color:var(--action)}
+
+.viewchip{display:inline-flex;align-items:center;gap:8px;min-height:38px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);font-family:var(--font-head);font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);transition:background .25s var(--ease),border-color .25s var(--ease)}
+.viewchip .vdot{width:9px;height:9px;border-radius:50%;background:var(--dot-rest);flex:none;transition:background .25s var(--ease)}
+.viewchip.after{background:var(--slate-tint);border-color:var(--slate);color:var(--slate-dark)}
+.viewchip.after .vdot{background:var(--slate)}
+
+.rec{display:inline-flex;align-items:center;min-height:44px;padding:9px 15px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-family:var(--font-head);font-weight:700;font-size:15px;cursor:pointer;color:var(--ink);transition:border-color .15s var(--ease),box-shadow .15s var(--ease),opacity .2s var(--ease)}
+.rec:hover:not(:disabled){border-color:var(--action)}
+.rec:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+.rec:disabled{opacity:.5;cursor:default}
+.rec.chosen{opacity:1}
+.rec.sel-wrong{border-color:var(--coral);box-shadow:0 0 0 3px var(--coral-tint)}
+.rec.sel-right{border-color:var(--green);box-shadow:0 0 0 3px var(--green-tint)}
+.hops{display:inline-flex;gap:7px;align-items:center;flex-wrap:wrap}
+.hopb{min-width:46px;min-height:44px;padding:8px 13px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);font-family:var(--font-head);font-weight:700;font-size:17px;cursor:pointer;transition:transform .12s var(--ease),border-color .15s var(--ease),opacity .2s var(--ease)}
+.hopb:active:not(:disabled){transform:scale(.92)}
+.hopb:disabled{opacity:.45;cursor:default}
+.hopb:focus-visible{outline:2px solid var(--action);outline-offset:2px}
+.hopb.i{background:var(--coral-tint);border-color:var(--coral);color:var(--coral-dark)}
+.hopb.j{background:var(--action-tint);border-color:var(--action);color:var(--action)}
+.hopb.u{color:var(--ink-soft);font-size:14px}
+.numin.shown{border-color:var(--green);background:var(--green-tint)}
+.numin.ci{color:var(--coral-dark)}
+.numin.cj{color:var(--action)}
+
+/* labelled mini-matrix chips + 2x2 entry grid (steps 9-10) */
+.mchip{display:inline-flex;align-items:center;gap:9px;min-height:44px;padding:6px 12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface)}
+.mchip .mlb{font-family:var(--font-head);font-weight:700;font-size:12.5px;line-height:1.15;color:var(--ink-soft);max-width:9ch}
+.mchip .evec .eg{font-size:14px}
+.thenlb{font-family:var(--font-head);font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.mgrid2{display:grid;grid-template-columns:auto auto;gap:4px 7px;padding:2px 0}
+.mgrid2 .numin{width:52px;margin:0}
+.mbr{width:8px;align-self:stretch;border:2.2px solid var(--ink)}
+.mbr.l{border-right:0;border-radius:6px 0 0 6px}
+.mbr.r{border-left:0;border-radius:0 6px 6px 0}
+.rec .evec .eg{font-size:14px}
+.rec.cap10{padding:7px 11px}
+
+/* tappable proof pieces (step 10) */
+.cutp{cursor:pointer;transition:fill-opacity .5s var(--ease),stroke-opacity .5s var(--ease)}
+.cutp.cutgone{fill-opacity:.06;stroke-opacity:.22;cursor:default}
+.ledg.n{background:var(--surface);border-color:var(--line);color:var(--ink);font-size:15px}
+
+/* step 11 recap card */
+.recap2{display:grid;grid-template-columns:1fr 1.25fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:2px 0 14px}
+.recap2>div{background:var(--surface);padding:9px 12px;font-size:13.5px;line-height:1.45;font-weight:600;color:var(--ink)}
+.recap2 .rhead{background:var(--paper);font-family:var(--font-head);font-weight:700;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.recap2 .ci{color:var(--coral-dark)}
+.recap2 .cj{color:var(--action)}
+.tease{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:10px 13px;border:1.5px dashed var(--line);border-radius:12px;margin:0 0 8px}
+.tease .tq{flex:1;min-width:180px;font-size:13.5px;line-height:1.5;font-weight:600;color:var(--ink)}
+
+/* ---- equation rendering (Part 2) ---- */
+.eq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:7px;font-family:var(--font-head);font-weight:700;font-size:18px;margin:6px 0 2px}
+.eq .op{color:var(--ink-soft);font-weight:600}
+.eq .cnt-i{color:var(--coral-dark);font-size:20px}
+.eq .cnt-j{color:var(--action);font-size:20px}
+.evec{display:inline-flex;align-items:stretch;gap:4px}
+.evec .br{width:7px;border:2.2px solid var(--ink)}
+.evec .br.l{border-right:0;border-radius:6px 0 0 6px}
+.evec .br.r{border-left:0;border-radius:0 6px 6px 0}
+.evec .eg{display:grid;row-gap:0;padding:2px 1px;font-size:16.5px;line-height:1.3;text-align:center;min-width:2ch;font-variant-numeric:tabular-nums}
+.evec .eg.two{grid-template-columns:auto auto;column-gap:10px}
+.eqcap{font-size:14.5px;line-height:1.5;color:var(--ink-soft);text-align:center;margin-top:12px}
+
+/* walk landing pulse */
+.vg-land{transform-box:fill-box;transform-origin:center;animation:vg-land .7s var(--ease) forwards}
+@keyframes vg-land{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.4);opacity:0}}
+/* pulsing highlighted face dot (the eye) */
+.vg-eyepulse{transform-box:fill-box;transform-origin:center;animation:vg-eyep 1.5s var(--ease) infinite}
+@keyframes vg-eyep{0%,100%{transform:scale(1)}50%{transform:scale(1.85)}}
+@media (prefers-reduced-motion:reduce){
+  .vg-land{animation:none;opacity:0}
+  .vg-eyepulse{animation:none}
+}
+
+/* ---- epilogue (step 12 coda): two quiet cards, blocks fade in one at a time ---- */
+.epi .eh{font-family:var(--font-head);font-weight:700;font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 0}
+.epi .eqcap{margin-top:9px;margin-bottom:2px}
+.endcard.epi .close{color:var(--ink);font-weight:650}
+.eqgrp{display:inline-flex;align-items:center;gap:7px}
+.fadeup{opacity:0;animation:epi-up .6s var(--ease) both}
+@keyframes epi-up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.fadeup{animation:none;opacity:1}}
+
+/* ---- small screens ---- */
+@media (max-width:700px){
+  .app{padding:8px 10px 10px;gap:8px}
+  .dstep.cur .dlabel{display:none}
+  .dcirc{width:18px;height:18px;font-size:10.5px}
+  .dcheck{width:7px;height:4px;border-left-width:2px;border-bottom-width:2px}
+  .dline{width:6px;margin:0 4px}
+  .dsplit{margin:0 6px;height:12px}
+  .numin{width:54px}
+  .eq{font-size:16px;gap:5px}
+  .evec .eg{font-size:15px}
+  .instr{min-height:0;gap:8px}
+  .prompt{font-size:15.5px}
+  .task{padding:6px 10px}
+  .task .ttx{font-size:13px}
+  .btn-2nd{font-size:13.5px;padding:8px 12px}
+  .snapslot{min-height:46px}
+  .snapslot svg{width:36px;height:36px}
+  .tpill{font-size:12px;padding:6px 10px;min-height:34px}
+  .vg-toolbar{padding:8px 10px}
+  .vg-top{padding:10px 10px 0}
+  .vg-mgrid{font-size:18px}
+  .vg-chip .val{font-size:20px}
+  .qprev svg{width:64px;height:64px}
+  .qgal svg{width:72px;height:72px}
+  .qcard{padding:14px}
+  .endcard{padding:18px}
+  .endcard.c2{padding:12px 14px}
+  .mchip{padding:5px 9px;gap:6px}
+  .mchip .evec .eg{font-size:12px}
+  .mchip .mlb{font-size:11px}
+  .mgrid2 .numin{width:46px;min-height:40px}
+  .recap2>div{padding:7px 8px;font-size:11.5px}
+  .tease .tq{font-size:12.5px}
+  .epi .evec .eg{font-size:13px}
+  .epi .eh{font-size:10.5px}
+  .ledg.n{font-size:13px}
+  .btn-go{padding:11px 18px;font-size:15px}
+  .feed{font-size:13.5px}
+}
+</style>
+
+<div class="app">
+  <nav class="dots" id="dots" aria-label="Lesson progress"></nav>
+
+  <div class="instr">
+    <div class="txt">
+      <div class="eyebrow2" id="stepEyebrow"></div>
+      <div class="prompt" id="stepPrompt"></div>
+    </div>
+    <div class="task" id="task" hidden>
+      <span class="tlb">Your task</span><span class="ttx" id="taskText"></span>
+    </div>
+  </div>
+
+  <div class="strip" id="strip" hidden></div>
+
+  <div class="zone">
+    <div class="card vgcard"><div id="stage"></div></div>
+
+    <div class="qwrap" id="qwrap" hidden>
+      <div class="qcard" role="dialog" aria-modal="true" aria-label="Question">
+        <div class="eyebrow2" id="qEyebrow">Prediction</div>
+        <div class="qtext" id="qText"></div>
+        <div class="qgal" id="qGal" hidden></div>
+        <div class="qopts" id="qOpts"></div>
+        <div class="qfeed" id="qFeed" aria-live="polite"></div>
+      </div>
+    </div>
+
+    <div class="endwrap" id="landing" hidden>
+      <div class="endcard">
+        <div class="eyebrow2">Checkpoint &middot; End of Part 1</div>
+        <h2>You drove the machine by hand</h2>
+        <div class="eyebrow2">What your hands found out</div>
+        <ol class="disc">
+          <li>You moved two arrows &mdash; and every point of the picture followed.</li>
+          <li>You met the matrix: just those two arrows, written down as columns of numbers.</li>
+          <li>You proved order matters &mdash; rotate-then-stretch is not stretch-then-rotate.</li>
+          <li>You ran machines backwards &mdash; and met the one kind that flattens space, with no way back.</li>
+        </ol>
+        <p>Now the catch: <b>a computer has no hands.</b> When a game console redraws its world, nobody drags the arrows &mdash; the machine has to <i>calculate</i> where every point lands, from four numbers alone. Part&nbsp;2 is you discovering that calculation &mdash; how to push a point through a machine, chain machines together, and finally pin down the one number that says how much a machine stretches space.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bbar" id="bbar">
+    <div class="feed" id="feed" aria-live="polite"></div>
+    <button class="btn-go" id="goBtn" type="button" disabled>Continue</button>
+  </div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ================= VectorGrid — the reusable interactive =================
+   World: x,y in [-3.4, 3.4]. Screen: 680x680 viewBox, S px per unit.
+   The matrix is stored as its two columns: i-hat (ix,iy), j-hat (jx,jy).
+   cfg.pre is a hidden pre-transform: the picture and grid show m·pre while
+   the arrows (the learner's machine) show m.                              */
+
+var NS = 'http://www.w3.org/2000/svg';
+var VB = 680, C = 340, S = 100, EXT = 24, CLAMP = 3.2;
+var IDENTITY = { ix: 1, iy: 0, jx: 0, jy: 1 };
+var REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var COL = {
+  ink: '#17233B', guess: '#F5CE4E', berry: '#C4436A', slate: '#7C93AD',
+  gridFaint: '#EFE8DB', axesFaint: '#D9CFBE',
+  i: { main: '#EE6C4D', tint: '#FCE7DE', dark: '#C64522' },
+  j: { main: '#2F6BE4', tint: '#E7EFFD', dark: '#2F6BE4' }
+};
+
+function fmt(v) {
+  var s = (Math.round(v * 10) / 10).toFixed(1);
+  return s === '-0.0' ? '0.0' : s;
+}
+function clampN(v, a, b) { return Math.min(b, Math.max(a, v)); }
+function easeOut(t) { return 1 - Math.pow(1 - t, 4); }
+function copyM(m) { return { ix: m.ix, iy: m.iy, jx: m.jx, jy: m.jy }; }
+/* A·B for column-form matrices */
+function mul(A, B) {
+  return {
+    ix: A.ix * B.ix + A.jx * B.iy,
+    iy: A.iy * B.ix + A.jy * B.iy,
+    jx: A.ix * B.jx + A.jx * B.jy,
+    jy: A.iy * B.jx + A.jy * B.jy
+  };
+}
+
+function svgEl(tag, attrs, parent) {
+  var n = document.createElementNS(NS, tag);
+  for (var k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+
+/* The picture: a smiley built from dots — each dot is one point of space. */
+var FACE = (function () {
+  var pts = [], k, a;
+  for (k = 0; k < 16; k++) {
+    a = (k / 16) * 2 * Math.PI;
+    pts.push({ x: 1 + 0.78 * Math.cos(a), y: 1 + 0.78 * Math.sin(a), r: 7, c: COL.guess });
+  }
+  pts.push({ x: 0.70, y: 1.26, r: 8.5, c: COL.ink });
+  pts.push({ x: 1.30, y: 1.26, r: 8.5, c: COL.ink });
+  for (k = 0; k < 6; k++) {
+    a = (205 + k * 26) * Math.PI / 180;
+    pts.push({ x: 1 + 0.48 * Math.cos(a), y: 1.0 + 0.48 * Math.sin(a), r: 5.5, c: COL.ink });
+  }
+  return pts;
+})();
+
+function createVectorGrid(mount, options) {
+  var cfg = {
+    draggableI: true, draggableJ: true,
+    showMatrix: false, showArea: false, showCoords: false, showLabels: true,
+    showSnap: true, showReset: true, showFace: true, showTips: false,
+    showStaticGrid: true,
+    snap: true, ghost: null, pre: null, marker: null, face: null, facePaths: null,
+    range: 3.4,
+    matrix: IDENTITY,
+    onChange: null, onArrowTap: null, onGridTap: null
+  };
+  var k;
+  for (k in (options || {})) cfg[k] = options[k];
+
+  var m = copyM(cfg.matrix);
+  /* shadow the module constants: this instance's scale and drag limit,
+     recomputed from cfg.range in applyCfg */
+  var S = 100, CLAMP = 3.2, builtRange = null;
+
+  /* ---------- skeleton ---------- */
+  var root = document.createElement('div');
+  root.className = 'vg';
+  root.innerHTML =
+    '<div class="vg-top" hidden>' +
+      '<div class="vg-matrix" hidden aria-label="current matrix">' +
+        '<div class="br l"></div>' +
+        '<div class="vg-mgrid"><span class="ci"></span><span class="cj"></span><span class="ci"></span><span class="cj"></span></div>' +
+        '<div class="br r"></div>' +
+      '</div>' +
+      '<div class="vg-chip" hidden><span class="lb">Area</span><span class="val"></span></div>' +
+    '</div>' +
+    '<div class="vg-stage"></div>' +
+    '<div class="vg-toolbar">' +
+      '<label class="pill vg-snap"><input type="checkbox"><span class="dot"></span>Snap to &frac12;</label>' +
+      '<button class="vg-reset" type="button">Reset</button>' +
+    '</div>';
+  mount.appendChild(root);
+
+  var topEl    = root.querySelector('.vg-top');
+  var mtxEl    = root.querySelector('.vg-matrix');
+  var mtxCells = root.querySelectorAll('.vg-mgrid span'); /* [ix, jx, iy, jy] */
+  var chipEl   = root.querySelector('.vg-chip');
+  var chipVal  = root.querySelector('.vg-chip .val');
+  var toolbar  = root.querySelector('.vg-toolbar');
+  var snapPill = root.querySelector('.vg-snap');
+  var snapBox  = snapPill.querySelector('input');
+  var resetBtn = root.querySelector('.vg-reset');
+  var stage    = root.querySelector('.vg-stage');
+
+  snapBox.checked = !!cfg.snap;
+  snapPill.classList.toggle('on', snapBox.checked);
+  snapBox.addEventListener('change', function () {
+    cfg.snap = snapBox.checked;
+    snapPill.classList.toggle('on', snapBox.checked);
+  });
+  resetBtn.addEventListener('click', function () { api.reset(); });
+
+  /* ---------- svg scene ---------- */
+  var svg = svgEl('svg', {
+    viewBox: '0 0 ' + VB + ' ' + VB, 'class': 'vg-svg', role: 'img',
+    'aria-label': 'Coordinate grid with two draggable arrows that reshape a dot picture'
+  }, stage);
+
+  var i;
+  var gStatic = svgEl('g', {}, svg);
+  var gAxes = svgEl('g', {}, svg);
+  function rebuildStatic(range) {
+    gStatic.textContent = '';
+    gAxes.textContent = '';
+    var n = Math.floor(range);
+    for (var gi = -n; gi <= n; gi++) {
+      if (gi === 0) continue;
+      svgEl('line', { x1: C + gi * S, y1: 0, x2: C + gi * S, y2: VB, stroke: COL.gridFaint, 'stroke-width': 1 }, gStatic);
+      svgEl('line', { x1: 0, y1: C + gi * S, x2: VB, y2: C + gi * S, stroke: COL.gridFaint, 'stroke-width': 1 }, gStatic);
+    }
+    svgEl('line', { x1: C, y1: 0, x2: C, y2: VB, stroke: COL.axesFaint, 'stroke-width': 1.5 }, gAxes);
+    svgEl('line', { x1: 0, y1: C, x2: VB, y2: C, stroke: COL.axesFaint, 'stroke-width': 1.5 }, gAxes);
+  }
+
+  /* moving space: one group transform = screen mapping ∘ (m·pre) */
+  var gMove = svgEl('g', {}, svg);
+  var gMoveLines = svgEl('g', {}, gMove);
+  for (i = -EXT; i <= EXT; i++) {
+    var major = (i === 0);
+    svgEl('line', { x1: i, y1: -EXT, x2: i, y2: EXT, stroke: COL.slate, 'stroke-opacity': major ? 0.55 : 0.28, 'stroke-width': major ? 1.8 : 1.1, 'vector-effect': 'non-scaling-stroke' }, gMoveLines);
+    svgEl('line', { x1: -EXT, y1: i, x2: EXT, y2: i, stroke: COL.slate, 'stroke-opacity': major ? 0.55 : 0.28, 'stroke-width': major ? 1.8 : 1.1, 'vector-effect': 'non-scaling-stroke' }, gMoveLines);
+  }
+  var para = svgEl('polygon', {
+    points: '0,0 1,0 1,1 0,1', fill: COL.guess, 'fill-opacity': 0.18,
+    stroke: COL.guess, 'stroke-width': 2, 'vector-effect': 'non-scaling-stroke', display: 'none'
+  }, gMove);
+
+  var gMarker = svgEl('g', {}, svg);
+  var gGhost = svgEl('g', {}, svg);
+  var gFaceP = svgEl('g', {}, svg); /* connected face strokes, under the dots */
+  var gFace = svgEl('g', {}, svg);
+  var faceDots = [], facePathEls = [];
+  var builtFace = null, builtPaths = null;
+  function rebuildFace() {
+    var arr = cfg.face || FACE;
+    if (arr !== builtFace) {
+      builtFace = arr;
+      gFace.textContent = '';
+      faceDots = arr.map(function (d) {
+        var c = svgEl('circle', { r: d.r, fill: d.c }, gFace);
+        if (d.pulse) c.setAttribute('class', 'vg-eyepulse');
+        return c;
+      });
+    }
+    var pa = cfg.facePaths || null;
+    if (pa !== builtPaths) {
+      builtPaths = pa;
+      gFaceP.textContent = '';
+      facePathEls = (pa || []).map(function (p) {
+        return svgEl('path', {
+          fill: p.fill || 'none', 'fill-opacity': p.fillOp == null ? 1 : p.fillOp,
+          stroke: p.stroke || 'none', 'stroke-width': p.w || 3,
+          'stroke-opacity': p.op == null ? 1 : p.op,
+          'stroke-linejoin': 'round', 'stroke-linecap': 'round'
+        }, gFaceP);
+      });
+    }
+  }
+  var gOver = svgEl('g', {}, svg); /* step-owned overlay drawings (paper coords) */
+  svgEl('circle', { cx: C, cy: C, r: 4, fill: COL.ink }, svg);
+
+  /* ---------- arrows ---------- */
+  function makeArrow(key) {
+    var col = COL[key];
+    var g = svgEl('g', { 'class': 'vg-arrow pulse' }, svg);
+    var halo  = svgEl('circle', { r: 15, fill: col.tint, stroke: col.main, 'stroke-width': 0, 'class': 'vg-halo' }, g);
+    var shaft = svgEl('line', { stroke: col.main, 'stroke-width': 6, 'stroke-linecap': 'round' }, g);
+    var head  = svgEl('polygon', { fill: col.main }, g);
+    var label = svgEl('text', {
+      'font-family': "'Space Grotesk',sans-serif", 'font-size': 26, 'font-weight': 700,
+      fill: col.dark, 'text-anchor': 'middle', 'dominant-baseline': 'central',
+      'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 5, 'stroke-linejoin': 'round'
+    }, g);
+    label.textContent = key === 'i' ? 'î' : 'ĵ';
+    var coords = svgEl('text', {
+      'font-family': "'Space Grotesk',sans-serif", 'font-size': 17, 'font-weight': 600,
+      fill: '#4A5568', 'text-anchor': 'middle',
+      'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 6, 'stroke-linejoin': 'round',
+      display: 'none'
+    }, g);
+    var hit = svgEl('circle', { r: 40, fill: '#fff', 'fill-opacity': 0, 'class': 'vg-hit', tabindex: 0 }, g);
+    hit.setAttribute('aria-label', key === 'i'
+      ? 'Arrow one. Drag, or move with arrow keys.'
+      : 'Arrow two. Drag, or move with arrow keys.');
+    return { key: key, g: g, halo: halo, shaft: shaft, head: head, label: label, coords: coords, hit: hit, dragging: null };
+  }
+  var arrJ = makeArrow('j');
+  var arrI = makeArrow('i');
+  var arrows = [arrI, arrJ];
+  var gWalk = svgEl('g', {}, svg); /* breadcrumb walk trail, above everything */
+
+  function getV(a) { return a.key === 'i' ? { x: m.ix, y: m.iy } : { x: m.jx, y: m.jy }; }
+  function setV(a, x, y) {
+    if (a.key === 'i') { m.ix = x; m.iy = y; } else { m.jx = x; m.jy = y; }
+  }
+  function isDraggable(a) { return a.key === 'i' ? cfg.draggableI : cfg.draggableJ; }
+
+  function toWorld(e) {
+    var pt = svg.createSVGPoint();
+    pt.x = e.clientX; pt.y = e.clientY;
+    var p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    return { x: (p.x - C) / S, y: (C - p.y) / S };
+  }
+
+  arrows.forEach(function (a) {
+    var hit = a.hit;
+    hit.addEventListener('pointerdown', function (e) {
+      if (!isDraggable(a)) {
+        if (cfg.onArrowTap) { e.preventDefault(); cfg.onArrowTap(a.key); }
+        return;
+      }
+      e.preventDefault();
+      var w = toWorld(e), v = getV(a);
+      a.dragging = { id: e.pointerId, dx: v.x - w.x, dy: v.y - w.y };
+      hit.setPointerCapture(e.pointerId);
+      a.g.classList.remove('pulse');
+      a.g.classList.add('drag');
+    });
+    hit.addEventListener('pointermove', function (e) {
+      if (!a.dragging || e.pointerId !== a.dragging.id) return;
+      var w = toWorld(e);
+      var x = clampN(w.x + a.dragging.dx, -CLAMP, CLAMP);
+      var y = clampN(w.y + a.dragging.dy, -CLAMP, CLAMP);
+      if (cfg.snap) { x = Math.round(x * 2) / 2; y = Math.round(y * 2) / 2; }
+      setV(a, x, y);
+      requestRender();
+    });
+    function endDrag(e) {
+      if (!a.dragging || e.pointerId !== a.dragging.id) return;
+      a.dragging = null;
+      a.g.classList.remove('drag');
+      requestRender();
+    }
+    hit.addEventListener('pointerup', endDrag);
+    hit.addEventListener('pointercancel', endDrag);
+
+    hit.addEventListener('keydown', function (e) {
+      if (!isDraggable(a)) return;
+      var step = cfg.snap ? 0.5 : 0.1, v = getV(a);
+      var map = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] };
+      if (!map[e.key]) return;
+      e.preventDefault();
+      a.g.classList.remove('pulse');
+      setV(a, clampN(v.x + map[e.key][0], -CLAMP, CLAMP), clampN(v.y + map[e.key][1], -CLAMP, CLAMP));
+      requestRender();
+    });
+    hit.addEventListener('focus', function () { a.halo.setAttribute('stroke-width', 2.5); });
+    hit.addEventListener('blur', function () { a.halo.setAttribute('stroke-width', 0); });
+  });
+  svg.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  svg.addEventListener('pointerdown', function (e) {
+    if (!cfg.onGridTap) return;
+    if (e.target && e.target.classList && e.target.classList.contains('vg-hit')) return;
+    e.preventDefault();
+    cfg.onGridTap(toWorld(e));
+  });
+
+  /* ---------- render ---------- */
+  var rafId = null;
+  function requestRender() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(function () { rafId = null; render(); });
+  }
+
+  function updateArrow(a) {
+    var v = getV(a);
+    var tx = C + S * v.x, ty = C - S * v.y;
+    var dx = tx - C, dy = ty - C, len = Math.hypot(dx, dy);
+    var ux, uy;
+    if (len > 1) { ux = dx / len; uy = dy / len; }
+    else { ux = a.key === 'i' ? 1 : 0; uy = a.key === 'i' ? 0 : -1; }
+
+    var shaftEnd = len > 16 ? 14 : 0;
+    a.shaft.setAttribute('x1', C); a.shaft.setAttribute('y1', C);
+    a.shaft.setAttribute('x2', tx - ux * shaftEnd); a.shaft.setAttribute('y2', ty - uy * shaftEnd);
+
+    if (len > 12) {
+      var nx = -uy, ny = ux;
+      a.head.setAttribute('points',
+        tx + ',' + ty + ' ' +
+        (tx - ux * 20 + nx * 9) + ',' + (ty - uy * 20 + ny * 9) + ' ' +
+        (tx - ux * 20 - nx * 9) + ',' + (ty - uy * 20 - ny * 9));
+      a.head.removeAttribute('display');
+    } else {
+      a.head.setAttribute('display', 'none');
+    }
+
+    a.halo.setAttribute('cx', tx); a.halo.setAttribute('cy', ty);
+    a.hit.setAttribute('cx', tx);  a.hit.setAttribute('cy', ty);
+
+    var name = a.key === 'i' ? 'î' : 'ĵ';
+    a.label.textContent = cfg.showTips ? name + ' (' + fmtq(v.x) + ', ' + fmtq(v.y) + ')' : name;
+    var lm = cfg.showTips ? 66 : 20;
+    var lx = clampN(tx + ux * (cfg.showTips ? 44 : 30), lm, VB - lm);
+    var ly = clampN(ty + uy * (cfg.showTips ? 44 : 30), 22, VB - 22);
+    a.label.setAttribute('x', lx); a.label.setAttribute('y', ly);
+    a.label.setAttribute('display', cfg.showLabels ? '' : 'none');
+
+    if (cfg.showCoords && a.dragging) {
+      a.coords.textContent = '(' + fmt(v.x) + ', ' + fmt(v.y) + ')';
+      a.coords.setAttribute('x', clampN(tx, 60, VB - 60));
+      a.coords.setAttribute('y', clampN(ty - 52, 24, VB - 12));
+      a.coords.removeAttribute('display');
+    } else {
+      a.coords.setAttribute('display', 'none');
+    }
+  }
+
+  function render() {
+    var eff = cfg.pre ? mul(m, cfg.pre) : m;
+    gMove.setAttribute('transform',
+      'matrix(' + (S * eff.ix) + ' ' + (-S * eff.iy) + ' ' + (S * eff.jx) + ' ' + (-S * eff.jy) + ' ' + C + ' ' + C + ')');
+
+    var det = eff.ix * eff.jy - eff.iy * eff.jx;
+    var neg = det < -0.001;
+    para.setAttribute('fill', neg ? COL.berry : COL.guess);
+    para.setAttribute('stroke', neg ? COL.berry : COL.guess);
+    para.setAttribute('fill-opacity', neg ? 0.14 : 0.18);
+
+    var farr = cfg.face || FACE;
+    for (var d = 0; d < farr.length && d < faceDots.length; d++) {
+      var p = farr[d];
+      faceDots[d].setAttribute('cx', C + S * (eff.ix * p.x + eff.jx * p.y));
+      faceDots[d].setAttribute('cy', C - S * (eff.iy * p.x + eff.jy * p.y));
+      if (p.hidden) faceDots[d].setAttribute('display', 'none');
+      else faceDots[d].removeAttribute('display');
+    }
+    var fps = cfg.facePaths || null;
+    if (fps) for (var fp = 0; fp < fps.length && fp < facePathEls.length; fp++) {
+      var pth = fps[fp], dstr = '';
+      for (var q = 0; q < pth.pts.length; q++) {
+        var w = pth.pts[q];
+        dstr += (q ? 'L' : 'M') +
+          (C + S * (eff.ix * w[0] + eff.jx * w[1])) + ' ' +
+          (C - S * (eff.iy * w[0] + eff.jy * w[1]));
+      }
+      if (pth.closed) dstr += 'Z';
+      facePathEls[fp].setAttribute('d', dstr);
+    }
+
+    updateArrow(arrI);
+    updateArrow(arrJ);
+
+    if (cfg.showMatrix) {
+      mtxCells[0].textContent = fmt(m.ix); mtxCells[1].textContent = fmt(m.jx);
+      mtxCells[2].textContent = fmt(m.iy); mtxCells[3].textContent = fmt(m.jy);
+    }
+    if (cfg.showArea) {
+      chipVal.textContent = fmt(det);
+      chipEl.classList.toggle('neg', neg);
+    }
+    if (cfg.onChange) cfg.onChange({ ix: m.ix, iy: m.iy, jx: m.jx, jy: m.jy, det: det });
+  }
+
+  /* ---------- programmatic matrix (tweened) ----------
+     A generation token supersedes older tweens (cancelAnimationFrame can't
+     stop a callback already dispatched this frame), and timing uses only
+     rAF timestamps so the clock is consistent. */
+  var tweenGen = 0;
+  function setMatrix(target, opts) {
+    opts = opts || {};
+    var gen = ++tweenGen;
+    if (!opts.animate || REDUCED) {
+      m = copyM(target);
+      requestRender();
+      return;
+    }
+    var from = copyM(m);
+    var dur = opts.duration || 450, start = null;
+    requestAnimationFrame(function step(now) {
+      if (gen !== tweenGen) return;
+      if (start === null) start = now;
+      var t = clampN((now - start) / dur, 0, 1), e = easeOut(t);
+      m.ix = from.ix + (target.ix - from.ix) * e;
+      m.iy = from.iy + (target.iy - from.iy) * e;
+      m.jx = from.jx + (target.jx - from.jx) * e;
+      m.jy = from.jy + (target.jy - from.jy) * e;
+      render();
+      if (t < 1) requestAnimationFrame(step);
+    });
+  }
+
+  function setGhost(g) {
+    cfg.ghost = g;
+    while (gGhost.firstChild) gGhost.removeChild(gGhost.firstChild);
+    if (!g) return;
+    FACE.forEach(function (d) {
+      svgEl('circle', {
+        cx: C + S * (g.ix * d.x + g.jx * d.y),
+        cy: C - S * (g.iy * d.x + g.jy * d.y),
+        r: d.r, fill: COL.slate, 'fill-opacity': d.c === COL.guess ? 0.38 : 0.55
+      }, gGhost);
+    });
+  }
+
+  /* marker for a point in ABSOLUTE (paper) coordinates.
+     mk: {x, y, label?, color?, labelOnly?} */
+  function setMarker(mk) {
+    cfg.marker = mk;
+    gMarker.textContent = '';
+    if (!mk) return;
+    var mx = C + S * mk.x, my = C - S * mk.y;
+    if (!mk.labelOnly) {
+      svgEl('circle', {
+        cx: mx, cy: my, r: 7.5,
+        fill: mk.color || COL.axesFaint,
+        stroke: mk.stroke || (mk.color ? '#A88A1E' : '#9C8F7A'), 'stroke-width': 1.5
+      }, gMarker);
+    }
+    if (mk.label) {
+      var t = svgEl('text', {
+        x: mx + 14, y: my - 12,
+        'font-family': "'Space Grotesk',sans-serif", 'font-size': 16, 'font-weight': 600,
+        fill: '#4A5568', 'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 5, 'stroke-linejoin': 'round'
+      }, gMarker);
+      t.textContent = mk.label;
+    }
+  }
+
+  /* animated walk: |cx| arrow-copies of ±î laid tip-to-tail, then |cy| of ±ĵ,
+     under the current (effective) matrix. Each hop is a real vector (shaft +
+     head) in its arrow's color; a dot rides along; the landing pulses green.
+     opts: append (keep previous trails), endLabel (text at the landing),
+     resultant (draw the origin→landing sum vector last), onDone. */
+  var walkGen = 0;
+  function clearWalk() { walkGen++; gWalk.textContent = ''; }
+  function walk(cx, cy, opts) {
+    opts = opts || {};
+    var gen = ++walkGen;
+    if (!opts.append) gWalk.textContent = '';
+    var eff = cfg.pre ? mul(m, cfg.pre) : m;
+    var hops = [], k;
+    var si = cx >= 0 ? 1 : -1, sj = cy >= 0 ? 1 : -1;
+    for (k = 0; k < Math.abs(cx); k++) hops.push({ dx: si * eff.ix, dy: si * eff.iy, col: COL.i.main });
+    for (k = 0; k < Math.abs(cy); k++) hops.push({ dx: sj * eff.jx, dy: sj * eff.jy, col: COL.j.main });
+    var px = C, py = C;
+    var dot = svgEl('circle', { cx: px, cy: py, r: 8, fill: COL.ink, stroke: '#fff', 'stroke-width': 2 }, gWalk);
+    var idx = 0;
+
+    /* live hop counter, e.g. "î × 2   ĵ × 3" */
+    var nI = Math.abs(cx), tI = null, tJ = null;
+    if (opts.counter) {
+      var ctr = svgEl('text', {
+        x: 26, y: 48, 'font-family': "'Space Grotesk',sans-serif", 'font-size': 26, 'font-weight': 700,
+        'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 7, 'stroke-linejoin': 'round'
+      }, gWalk);
+      tI = svgEl('tspan', { fill: COL.i.dark }, ctr);
+      tJ = svgEl('tspan', { fill: COL.j.dark, dx: 18 }, ctr);
+      updCounter(0, 0);
+    }
+    function updCounter(ci, cj) {
+      if (!tI) return;
+      tI.textContent = 'î × ' + fmtq((cx >= 0 ? 1 : -1) * ci);
+      tJ.textContent = cy !== 0 ? 'ĵ × ' + fmtq((cy >= 0 ? 1 : -1) * cj) : '';
+    }
+
+    /* one animated vector segment: growing shaft, head at the moving tip */
+    function segment(x1, y1, x2, y2, col, w, op, hl, hw, dur, done) {
+      var line = svgEl('line', { x1: x1, y1: y1, x2: x1, y2: y1, stroke: col, 'stroke-width': w, 'stroke-linecap': 'round', 'stroke-opacity': op }, gWalk);
+      var head = svgEl('polygon', { fill: col, 'fill-opacity': op, display: 'none' }, gWalk);
+      gWalk.appendChild(dot);
+      var vx = x2 - x1, vy = y2 - y1, L = Math.hypot(vx, vy) || 1;
+      var ux = vx / L, uy = vy / L;
+      function draw(tx, ty) {
+        var l2 = Math.hypot(tx - x1, ty - y1);
+        if (l2 > hl) {
+          line.setAttribute('x2', tx - ux * (hl - 4)); line.setAttribute('y2', ty - uy * (hl - 4));
+          head.removeAttribute('display');
+          var nx = -uy, ny = ux;
+          head.setAttribute('points',
+            tx + ',' + ty + ' ' +
+            (tx - ux * hl + nx * hw) + ',' + (ty - uy * hl + ny * hw) + ' ' +
+            (tx - ux * hl - nx * hw) + ',' + (ty - uy * hl - ny * hw));
+        } else {
+          line.setAttribute('x2', tx); line.setAttribute('y2', ty);
+        }
+        dot.setAttribute('cx', tx); dot.setAttribute('cy', ty);
+      }
+      if (REDUCED) { draw(x2, y2); done(); return; }
+      var start = null;
+      requestAnimationFrame(function fr(now) {
+        if (gen !== walkGen) return;
+        if (start === null) start = now;
+        var t = clampN((now - start) / dur, 0, 1), e = easeOut(t);
+        draw(x1 + vx * e, y1 + vy * e);
+        if (t < 1) requestAnimationFrame(fr);
+        else done();
+      });
+    }
+
+    function land() {
+      if (gen !== walkGen) return;
+      function fin() {
+        if (gen !== walkGen) return;
+        svgEl('circle', { cx: px, cy: py, r: 12, fill: 'none', stroke: '#12A66B', 'stroke-width': 3, 'class': 'vg-land' }, gWalk);
+        dot.setAttribute('stroke', '#12A66B');
+        dot.setAttribute('stroke-width', 3);
+        gWalk.appendChild(dot);
+        if (opts.endLabel) {
+          var ox = px - C, oy = py - C, ol = Math.hypot(ox, oy) || 1;
+          var t = svgEl('text', {
+            x: clampN(px + (ox / ol) * 28, 40, VB - 40),
+            y: clampN(py + (oy / ol) * 28, 22, VB - 22),
+            'font-family': "'Space Grotesk',sans-serif", 'font-size': 19, 'font-weight': 700,
+            fill: COL.ink, 'text-anchor': 'middle', 'dominant-baseline': 'central',
+            'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 6, 'stroke-linejoin': 'round'
+          }, gWalk);
+          t.textContent = opts.endLabel;
+        }
+        if (opts.onDone) setTimeout(function () { if (gen === walkGen) opts.onDone(); }, 350);
+      }
+      if (opts.resultant && (px !== C || py !== C)) {
+        segment(C, C, px, py, '#12A66B', 5.5, 0.95, 16, 8, 430, fin);
+      } else {
+        fin();
+      }
+    }
+
+    function hop() {
+      if (gen !== walkGen) return;
+      if (idx >= hops.length) { land(); return; }
+      var h = hops[idx++];
+      var nx = px + S * h.dx, ny = py - S * h.dy;
+      segment(px, py, nx, ny, h.col, 4.5, 0.75, 14, 7, 340, function () {
+        px = nx; py = ny;
+        updCounter(Math.min(idx, nI), Math.max(0, idx - nI));
+        setTimeout(function () { if (gen === walkGen) hop(); }, 110);
+      });
+    }
+    hop();
+  }
+
+  /* learner-built walk: one tap = one arrow-copy laid tip-to-tail. Logical
+     state (tip position, counts, counter text) commits instantly so rapid
+     taps never queue; each segment animates on its own fixed endpoints. */
+  var hopSt = null;
+  function hopCounter() {
+    if (!hopSt || !hopSt.tI) return;
+    hopSt.tI.textContent = 'î × ' + fmtq(hopSt.ci);
+    hopSt.tJ.textContent = 'ĵ × ' + fmtq(hopSt.cj);
+  }
+  function hopStart(opts) {
+    opts = opts || {};
+    walkGen++;
+    gWalk.textContent = '';
+    var st = {
+      gen: walkGen, ci: 0, cj: 0, px: C, py: C, stack: [], tI: null, tJ: null,
+      dot: svgEl('circle', { cx: C, cy: C, r: 8, fill: COL.ink, stroke: '#fff', 'stroke-width': 2 }, gWalk)
+    };
+    if (opts.counter) {
+      var ctr = svgEl('text', {
+        x: 26, y: 48, 'font-family': "'Space Grotesk',sans-serif", 'font-size': 26, 'font-weight': 700,
+        'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 7, 'stroke-linejoin': 'round'
+      }, gWalk);
+      st.tI = svgEl('tspan', { fill: COL.i.dark }, ctr);
+      st.tJ = svgEl('tspan', { fill: COL.j.dark, dx: 18 }, ctr);
+    }
+    hopSt = st;
+    hopCounter();
+  }
+  function hop(axis, sign) {
+    var st = hopSt;
+    if (!st || st.gen !== walkGen) return false;
+    var eff = cfg.pre ? mul(m, cfg.pre) : m;
+    var dx = axis === 'i' ? sign * eff.ix : sign * eff.jx;
+    var dy = axis === 'i' ? sign * eff.iy : sign * eff.jy;
+    var x1 = st.px, y1 = st.py, x2 = x1 + S * dx, y2 = y1 - S * dy;
+    if (x2 < 6 || x2 > VB - 6 || y2 < 6 || y2 > VB - 6) return 'out';
+    var col = axis === 'i' ? COL.i.main : COL.j.main;
+    var line = svgEl('line', { x1: x1, y1: y1, x2: x1, y2: y1, stroke: col, 'stroke-width': 4.5, 'stroke-linecap': 'round', 'stroke-opacity': 0.75 }, gWalk);
+    var head = svgEl('polygon', { fill: col, 'fill-opacity': 0.75, display: 'none' }, gWalk);
+    gWalk.appendChild(st.dot);
+    st.stack.push({ line: line, head: head, px: x1, py: y1, axis: axis, sign: sign });
+    st.px = x2; st.py = y2;
+    if (axis === 'i') st.ci += sign; else st.cj += sign;
+    hopCounter();
+    var vx = x2 - x1, vy = y2 - y1, L = Math.hypot(vx, vy) || 1;
+    var ux = vx / L, uy = vy / L, hl = 14, hw = 7;
+    function draw(tx, ty) {
+      if (Math.hypot(tx - x1, ty - y1) > hl) {
+        line.setAttribute('x2', tx - ux * (hl - 4)); line.setAttribute('y2', ty - uy * (hl - 4));
+        head.removeAttribute('display');
+        var nx = -uy, ny = ux;
+        head.setAttribute('points',
+          tx + ',' + ty + ' ' +
+          (tx - ux * hl + nx * hw) + ',' + (ty - uy * hl + ny * hw) + ' ' +
+          (tx - ux * hl - nx * hw) + ',' + (ty - uy * hl - ny * hw));
+      } else {
+        line.setAttribute('x2', tx); line.setAttribute('y2', ty);
+      }
+      /* the shared dot follows only the newest segment */
+      if (st.px === x2 && st.py === y2) { st.dot.setAttribute('cx', tx); st.dot.setAttribute('cy', ty); }
+    }
+    if (REDUCED) { draw(x2, y2); return true; }
+    var gen = st.gen, start = null;
+    requestAnimationFrame(function fr(now) {
+      if (gen !== walkGen) return;
+      if (start === null) start = now;
+      var t = clampN((now - start) / 240, 0, 1);
+      draw(x1 + vx * easeOut(t), y1 + vy * easeOut(t));
+      if (t < 1) requestAnimationFrame(fr);
+    });
+    return true;
+  }
+  function hopUndo() {
+    var st = hopSt;
+    if (!st || st.gen !== walkGen || !st.stack.length) return false;
+    var h = st.stack.pop();
+    if (h.line.parentNode) h.line.parentNode.removeChild(h.line);
+    if (h.head.parentNode) h.head.parentNode.removeChild(h.head);
+    st.px = h.px; st.py = h.py;
+    if (h.axis === 'i') st.ci -= h.sign; else st.cj -= h.sign;
+    hopCounter();
+    st.dot.setAttribute('cx', st.px); st.dot.setAttribute('cy', st.py);
+    gWalk.appendChild(st.dot);
+    return true;
+  }
+  function hopState() {
+    var st = hopSt;
+    if (!st || st.gen !== walkGen) return null;
+    return { ci: st.ci, cj: st.cj, x: (st.px - C) / S, y: (C - st.py) / S };
+  }
+  function hopLand(opts) {
+    opts = opts || {};
+    var st = hopSt;
+    if (!st || st.gen !== walkGen) return;
+    svgEl('circle', { cx: st.px, cy: st.py, r: 12, fill: 'none', stroke: '#12A66B', 'stroke-width': 3, 'class': 'vg-land' }, gWalk);
+    st.dot.setAttribute('stroke', '#12A66B');
+    st.dot.setAttribute('stroke-width', 3);
+    gWalk.appendChild(st.dot);
+    if (opts.endLabel) {
+      var ox = st.px - C, oy = st.py - C, ol = Math.hypot(ox, oy) || 1;
+      var t = svgEl('text', {
+        x: clampN(st.px + (ox / ol) * 28, 40, VB - 40),
+        y: clampN(st.py + (oy / ol) * 28, 22, VB - 22),
+        'font-family': "'Space Grotesk',sans-serif", 'font-size': 19, 'font-weight': 700,
+        fill: COL.ink, 'text-anchor': 'middle', 'dominant-baseline': 'central',
+        'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 6, 'stroke-linejoin': 'round'
+      }, gWalk);
+      t.textContent = opts.endLabel;
+    }
+  }
+
+  function applyCfg() {
+    var r = cfg.range || 3.4;
+    S = VB / (2 * r);
+    if (r !== builtRange) {
+      builtRange = r;
+      CLAMP = r - 0.2;
+      rebuildStatic(r);
+      setGhost(cfg.ghost);
+      setMarker(cfg.marker);
+    }
+    gFace.style.display = cfg.showFace === false ? 'none' : '';
+    gFaceP.style.display = cfg.showFace === false ? 'none' : '';
+    gStatic.style.display = cfg.showStaticGrid === false ? 'none' : '';
+    gMoveLines.style.display = cfg.showMoveGrid === false ? 'none' : '';
+    rebuildFace();
+    mtxEl.hidden = !cfg.showMatrix;
+    chipEl.hidden = !cfg.showArea;
+    topEl.hidden = !(cfg.showMatrix || cfg.showArea);
+    snapPill.style.display = cfg.showSnap ? '' : 'none';
+    resetBtn.style.display = cfg.showReset ? '' : 'none';
+    toolbar.hidden = !(cfg.showSnap || cfg.showReset);
+    para.setAttribute('display', cfg.showArea ? '' : 'none');
+    arrows.forEach(function (a) {
+      var on = isDraggable(a);
+      var tap = !on && !!cfg.onArrowTap;
+      a.hit.style.display = (on || tap) ? '' : 'none';
+      a.halo.style.display = (on || tap) ? '' : 'none';
+      a.hit.style.cursor = on ? 'grab' : 'pointer';
+      a.hit.setAttribute('tabindex', on ? 0 : -1);
+      if (!on) a.dragging = null;
+    });
+    requestRender();
+  }
+
+  var api = {
+    el: root,
+    getMatrix: function () { return { ix: m.ix, iy: m.iy, jx: m.jx, jy: m.jy, det: m.ix * m.jy - m.iy * m.jx }; },
+    setMatrix: setMatrix,
+    reset: function (animate) { setMatrix(IDENTITY, { animate: animate !== false }); },
+    setGhost: setGhost,
+    setMarker: setMarker,
+    walk: walk,
+    clearWalk: clearWalk,
+    hopStart: hopStart, hop: hop, hopUndo: hopUndo, hopState: hopState, hopLand: hopLand,
+    /* let a step draw its own annotations; fn(group, toPx(x,y) → {x,y}) */
+    overlay: function (fn) {
+      gOver.textContent = '';
+      if (fn) fn(gOver, function (x, y) { return { x: C + S * x, y: C - S * y }; });
+    },
+    pulse: function (key) {
+      var a = key === 'i' ? arrI : arrJ;
+      a.g.classList.remove('pulse');
+      setTimeout(function () { a.g.classList.add('pulse'); }, 30);
+    },
+    setConfig: function (partial) {
+      for (var k in partial) cfg[k] = partial[k];
+      if ('snap' in partial) {
+        snapBox.checked = !!partial.snap;
+        snapPill.classList.toggle('on', snapBox.checked);
+      }
+      applyCfg();
+      if ('ghost' in partial) setGhost(partial.ghost);
+      if ('marker' in partial) setMarker(partial.marker);
+    },
+    destroy: function () { mount.removeChild(root); }
+  };
+
+  applyCfg();
+  render();
+  return api;
+}
+
+window.createVectorGrid = createVectorGrid;
+
+/* ============================ lesson engine ============================ */
+
+var SHEAR    = { ix: 1, iy: 0, jx: 1, jy: 1 };
+var SWAP     = { ix: 0, iy: 1, jx: 1, jy: 0 };
+var ROT90    = { ix: 0, iy: 1, jx: -1, jy: 0 };  /* quarter-turn, counterclockwise */
+var STRETCH2 = { ix: 2, iy: 0, jx: 0, jy: 1 };   /* twice as wide */
+
+function near(s, t, tol) {
+  tol = tol || 0.11;
+  return Math.abs(s.ix - t.ix) < tol && Math.abs(s.iy - t.iy) < tol &&
+         Math.abs(s.jx - t.jx) < tol && Math.abs(s.jy - t.jy) < tol;
+}
+
+var $ = function (id) { return document.getElementById(id); };
+var dotsEl = $('dots'), eyebrowEl = $('stepEyebrow'), promptEl = $('stepPrompt');
+var taskEl = $('task'), taskText = $('taskText');
+var stripEl = $('strip');
+var feedEl = $('feed'), goBtn = $('goBtn');
+var qwrap = $('qwrap'), qEyebrow = $('qEyebrow'), qText = $('qText'), qGal = $('qGal'), qOpts = $('qOpts'), qFeed = $('qFeed');
+var landing = $('landing');
+
+var DOT_LABELS = ['Play', 'Match', 'Reveal', 'Order', 'Undo', 'Checkpoint', 'Recipe', 'Multiply', 'Compose', 'Measure', 'Formula', 'Connect'];
+var NSTEPS = 12;
+var cur = 0;
+var doneArr = [];
+for (var di = 0; di < NSTEPS; di++) doneArr.push(false);
+var btnFn = null;
+var suppress = false, supT = null;
+
+function renderDots() {
+  dotsEl.textContent = '';
+  for (var i = 0; i < NSTEPS; i++) {
+    var st = document.createElement('button');
+    st.type = 'button';
+    st.className = 'dstep' + (i === cur ? ' cur' : '') + (doneArr[i] ? ' done' : '');
+    st.dataset.step = i;
+    st.setAttribute('aria-label', 'Go to step ' + (i + 1) + ': ' + DOT_LABELS[i]);
+    st.title = 'Step ' + (i + 1) + ' · ' + DOT_LABELS[i];
+    if (i === cur) st.setAttribute('aria-current', 'step');
+    var c = document.createElement('span');
+    c.className = 'dcirc';
+    if (doneArr[i]) {
+      var ck = document.createElement('span');
+      ck.className = 'dcheck';
+      c.appendChild(ck);
+    } else {
+      c.textContent = i + 1;
+    }
+    st.appendChild(c);
+    var lb = document.createElement('span');
+    lb.className = 'dlabel';
+    lb.textContent = DOT_LABELS[i];
+    st.appendChild(lb);
+    dotsEl.appendChild(st);
+    if (i < NSTEPS - 1) {
+      var ln = document.createElement('span');
+      /* a small divider tick separates Part 1 (1-7, geometry) from Part 2 (8-12, arithmetic) */
+      ln.className = i === 6 ? 'dsplit' : 'dline' + (doneArr[i] ? ' done' : '');
+      dotsEl.appendChild(ln);
+    }
+  }
+}
+
+/* the rail is also the navigation: tap any dot to jump straight to that step.
+   enterStep() fully re-baselines the grid, so arriving mid-lesson is safe.
+   Re-clicking the current dot is a no-op (an accidental tap must not wipe
+   progress inside the step). */
+dotsEl.addEventListener('click', function (e) {
+  var b = e.target;
+  while (b && b !== dotsEl && !(b.dataset && b.dataset.step !== undefined)) b = b.parentNode;
+  if (!b || b === dotsEl) return;
+  var idx = +b.dataset.step;
+  if (idx !== cur) enterStep(idx);
+});
+
+function setTask(html) {
+  if (html) { taskText.innerHTML = html; taskEl.hidden = false; }
+  else taskEl.hidden = true;
+}
+function setStepText(eyebrow, promptHTML, taskHTML) {
+  eyebrowEl.textContent = eyebrow;
+  promptEl.innerHTML = promptHTML;
+  setTask(taskHTML);
+}
+
+function feed(html, kind) {
+  feedEl.innerHTML = html || '';
+  feedEl.className = 'feed' + (kind ? ' ' + kind : '');
+}
+function ok(html) { feed('<span class="okdot"></span>' + html, 'ok'); }
+
+function setButton(label, enabled, fn) {
+  goBtn.textContent = label;
+  goBtn.disabled = !enabled;
+  btnFn = fn;
+}
+goBtn.addEventListener('click', function () { if (btnFn && !goBtn.disabled) btnFn(); });
+
+function vgGo(target) {
+  suppress = true;
+  vg.setMatrix(target, { animate: true });
+  clearTimeout(supT);
+  supT = setTimeout(function () { suppress = false; }, 520);
+}
+
+function advance() {
+  doneArr[cur] = true;
+  enterStep(cur + 1);
+}
+
+/* mini face preview — auto-fits large transforms into the 90px box */
+function miniFaceSVG(mm) {
+  var c = 45, maxA = 0.1;
+  FACE.forEach(function (p) {
+    var X = mm.ix * p.x + mm.jx * p.y, Y = mm.iy * p.x + mm.jy * p.y;
+    maxA = Math.max(maxA, Math.abs(X), Math.abs(Y));
+  });
+  var s = Math.min(20, 39 / maxA);
+  var out = '<svg viewBox="0 0 90 90" role="img" aria-hidden="true">' +
+    '<rect width="90" height="90" rx="10" fill="#FBF7EF"/>' +
+    '<line x1="45" y1="6" x2="45" y2="84" stroke="#E7DFD2" stroke-width="1"/>' +
+    '<line x1="6" y1="45" x2="84" y2="45" stroke="#E7DFD2" stroke-width="1"/>';
+  FACE.forEach(function (p) {
+    var px = c + s * (mm.ix * p.x + mm.jx * p.y);
+    var py = c - s * (mm.iy * p.x + mm.jy * p.y);
+    out += '<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="' + (p.r * 0.34).toFixed(1) + '" fill="' + p.c + '"/>';
+  });
+  return out + '</svg>';
+}
+
+/* reusable question overlay.
+   q: {eyebrow, text, gallery?, options?, correct, btnLabel, onDone(wasRight, idx)}
+   options: [{svg?, cap, fb}]; options:null → notice with an always-enabled button */
+function askQuestion(q) {
+  qEyebrow.textContent = q.eyebrow || 'Question';
+  qText.innerHTML = q.text;
+  if (q.gallery && q.gallery.length) {
+    qGal.hidden = false;
+    qGal.innerHTML = q.gallery.map(function (g) {
+      return '<figure>' + g.svg + '<figcaption>' + g.label + '</figcaption></figure>';
+    }).join('');
+  } else {
+    qGal.hidden = true; qGal.innerHTML = '';
+  }
+  qFeed.innerHTML = ''; qFeed.className = 'qfeed';
+  qOpts.textContent = '';
+  if (!q.options) {
+    qOpts.hidden = true;
+    qwrap.hidden = false;
+    setButton(q.btnLabel || 'Continue', true, function () { qwrap.hidden = true; q.onDone(true, -1); });
+    return;
+  }
+  qOpts.hidden = false;
+  var hasPrev = q.options.some(function (o) { return o.svg; });
+  qOpts.className = 'qopts' + (hasPrev ? '' : ' list');
+  var answered = false;
+  q.options.forEach(function (o, idx) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'qopt';
+    b.innerHTML = (o.svg ? '<span class="qprev">' + o.svg + '</span>' : '') + '<span>' + o.cap + '</span>';
+    b.addEventListener('click', function () {
+      if (answered) return;
+      answered = true;
+      qOpts.querySelectorAll('.qopt').forEach(function (x, k) {
+        x.disabled = true;
+        if (k === idx) x.classList.add('chosen', idx === q.correct ? 'sel-right' : 'sel-wrong');
+      });
+      qFeed.innerHTML = o.fb;
+      qFeed.className = 'qfeed ' + (idx === q.correct ? 'ok' : 'warn');
+      setButton(q.btnLabel || 'Continue', true, function () { qwrap.hidden = true; q.onDone(idx === q.correct, idx); });
+    });
+    qOpts.appendChild(b);
+  });
+  qwrap.hidden = false;
+  setButton(q.btnLabel || 'Continue', false, null);
+}
+
+/* strip helpers */
+function mk(tag, cls, html) {
+  var n = document.createElement(tag);
+  if (tag === 'button') n.type = 'button';
+  n.className = cls;
+  if (html) n.innerHTML = html;
+  return n;
+}
+
+/* ---------------- step 1 — play ---------------- */
+var step1 = {
+  done: false,
+  enter: function () {
+    this.done = false;
+    vg.setConfig({
+      draggableI: true, draggableJ: true,
+      showMatrix: false, showArea: false, showLabels: false, showCoords: false,
+      showSnap: false, showReset: true, snap: true, ghost: null, pre: null
+    });
+    vgGo(IDENTITY);
+    setStepText('Step 1 · Play', 'Drag the arrows. Watch what happens.', 'Make the face twice as wide.');
+    feed('');
+    setButton('Continue', false, advance);
+  },
+  onState: function (s) {
+    if (this.done) return;
+    if (near(s, STRETCH2)) {
+      this.done = true;
+      ok('Twice as wide &mdash; and one arrow did all of it.');
+      setButton('Continue', true, advance);
+    } else if (near(s, { ix: 1, iy: 0, jx: 0, jy: 2 })) {
+      feed('That&rsquo;s twice as <b>tall</b>. Which arrow points along the direction you want to stretch?', 'warn');
+    } else if (near(s, { ix: 0.5, iy: 0, jx: 0, jy: 1 })) {
+      feed('That&rsquo;s half as wide &mdash; you squashed it. Drag the same arrow the other way.', 'warn');
+    } else if (near(s, { ix: 2, iy: 0, jx: 0, jy: 2 })) {
+      feed('Bigger all over &mdash; but only the width should change. Put one arrow back.', 'warn');
+    }
+  }
+};
+
+/* ---------------- step 2 — match the ghost ---------------- */
+var step2 = {
+  done: false, timer: null,
+  enter: function () {
+    this.done = false;
+    vg.setConfig({
+      draggableI: true, draggableJ: true,
+      showMatrix: false, showArea: false, showLabels: false, showCoords: false,
+      showSnap: false, showReset: true, snap: true, ghost: SHEAR, pre: null
+    });
+    vgGo(IDENTITY);
+    setStepText('Step 2 · Match', 'A ghost shows where the face should land. Drag until the face matches it.', 'Match the ghost.');
+    feed('');
+    setButton('Continue', false, advance);
+    var self = this;
+    this.timer = setTimeout(function () {
+      if (!self.done) feed('Only one arrow needs to move.');
+    }, 18000);
+  },
+  leave: function () { clearTimeout(this.timer); },
+  onState: function (s) {
+    if (this.done) return;
+    if (near(s, SHEAR)) {
+      this.done = true;
+      clearTimeout(this.timer);
+      ok('Matched. The two arrows control every point in the picture.');
+      setButton('Continue', true, advance);
+    } else if (Math.abs(s.ix - 1) > 0.15 || Math.abs(s.iy) > 0.15) {
+      feed('Look at the ghost&rsquo;s bottom edge &mdash; it never moved. Put the sideways arrow back.', 'warn');
+    }
+  }
+};
+
+/* ---------------- step 3 — reveal the matrix ---------------- */
+var step3 = {
+  phase: 'A', done: false, dragged: false,
+  enter: function () {
+    this.phase = 'A'; this.done = false; this.dragged = false;
+    vg.setConfig({
+      draggableI: true, draggableJ: true,
+      showMatrix: true, showArea: false, showLabels: true, showCoords: false,
+      showSnap: true, showReset: true, snap: true, ghost: null, pre: null
+    });
+    vgGo(IDENTITY);
+    setStepText('Step 3 · Reveal',
+      'Those four numbers are a <b>matrix</b> &mdash; the machine you&rsquo;ve been driving. Each column is one arrow: drag and watch.',
+      'Set &icirc; to <b class="ci">(0, 1)</b> and &jcirc; to <b class="cj">(1, 0)</b>.');
+    feed('');
+    setButton('Continue', false, advance);
+  },
+  onState: function (s) {
+    if (this.phase === 'A' && !this.done && near(s, SWAP)) {
+      this.done = true;
+      ok('Mirrored &mdash; x and y traded places.');
+      setButton('Continue', true, advance);
+    }
+  }
+};
+
+/* ---------------- step 4 — order matters ---------------- */
+var step4 = {
+  lm: null, clicks: [], runs: [], busy: false,
+  enter: function () {
+    this.lm = copyM(IDENTITY);
+    this.clicks = []; this.runs = []; this.busy = false;
+    vg.setConfig({
+      draggableI: false, draggableJ: false,
+      showMatrix: true, showArea: false, showLabels: true, showCoords: false,
+      showSnap: false, showReset: false, snap: true, ghost: null, pre: null
+    });
+    vgGo(IDENTITY);
+    setStepText('Step 4 · Order', 'Two ready-made machines. Run both, in each order, and compare what comes out.', 'Press both buttons.');
+    this.buildStrip();
+    feed('');
+    setButton('Continue', false, advance);
+  },
+  buildStrip: function () {
+    stripEl.textContent = '';
+    stripEl.hidden = false;
+    var self = this;
+    this.bR = mk('button', 'btn-2nd', 'Rotate 90&deg;');
+    this.bS = mk('button', 'btn-2nd', 'Stretch 2&times; wide');
+    this.bR.addEventListener('click', function () { self.press('R'); });
+    this.bS.addEventListener('click', function () { self.press('S'); });
+    this.slot1 = mk('div', 'snapslot', '<span class="cap">Run 1</span>');
+    this.slot2 = mk('div', 'snapslot', '<span class="cap">Run 2</span>');
+    stripEl.appendChild(this.bR);
+    stripEl.appendChild(this.bS);
+    var sp = mk('span', 'sp', '');
+    stripEl.appendChild(sp);
+    stripEl.appendChild(this.slot1);
+    stripEl.appendChild(this.slot2);
+  },
+  orderLabel: function (o) {
+    return o[0] === 'R' ? 'Rotate, then stretch' : 'Stretch, then rotate';
+  },
+  press: function (w) {
+    if (this.busy || this.runs.length >= 2 || this.clicks.length >= 2) return;
+    if (this.runs.length === 1 && this.clicks.length === 0 && w === this.runs[0].order[0]) {
+      feed('The other order this time &mdash; start with the other machine.', 'warn');
+      return;
+    }
+    this.clicks.push(w);
+    this.lm = mul(w === 'R' ? ROT90 : STRETCH2, this.lm);
+    vg.setMatrix(copyM(this.lm), { animate: true });
+    feed(this.clicks.length === 1 ? 'One more.' : '');
+    if (this.clicks.length === 2) {
+      this.busy = true;
+      var self = this;
+      var run = { order: this.clicks.slice(), m: copyM(this.lm) };
+      setTimeout(function () {
+        self.runs.push(run);
+        var slot = self.runs.length === 1 ? self.slot1 : self.slot2;
+        slot.className = 'snapslot filled';
+        slot.innerHTML = miniFaceSVG(run.m) + '<span class="cap">' + self.orderLabel(run.order) + '</span>';
+        if (self.runs.length === 1) {
+          setTimeout(function () {
+            self.clicks = [];
+            self.lm = copyM(IDENTITY);
+            vgGo(IDENTITY);
+            setTask('Now the other order.');
+            feed('Saved. Same two machines &mdash; other order.');
+            self.busy = false;
+          }, 1100);
+        } else {
+          feed('');
+          setTimeout(function () { self.ask(); }, 900);
+        }
+      }, 700);
+    }
+  },
+  ask: function () {
+    var r = this.runs;
+    askQuestion({
+      eyebrow: 'Compare',
+      text: 'Did you get the same picture?',
+      gallery: [
+        { svg: miniFaceSVG(r[0].m), label: this.orderLabel(r[0].order) },
+        { svg: miniFaceSVG(r[1].m), label: this.orderLabel(r[1].order) }
+      ],
+      options: [
+        { cap: 'Yes &mdash; the same', fb: 'Look again &mdash; one face is wide, the other is tall. Same machines, different order, different picture.' },
+        { cap: 'No &mdash; different', fb: 'Right &mdash; the same two machines, run in the other order, make a different machine.' }
+      ],
+      correct: 1,
+      btnLabel: 'Continue',
+      onDone: function () { advance(); }
+    });
+  }
+};
+
+/* ---- blob-tiling demo (3b1b: why ONE number scales every shape) ----
+   A lopsided closed blob near the origin, plus a lattice of small squares
+   whose centres fall inside it. All are given in WORLD coordinates, so when
+   the Measure matrix animates identity → area-2, the blob and every tile
+   scale in lockstep — the whole point: each square doubles, so the blob does.
+   TILE = 0.5 (half-unit squares); tiles inside the blob approximate its area. */
+var BLOB = (function () {
+  /* a lopsided rounded blob, centred so it and its DOUBLED image both stay on
+     range 3.6 (doubled bbox x∈[−0.8, 3.2], y∈[0, 1.6]). True area ≈ 2.44. */
+  var c = { x: 0.6, y: 0.8 }, pts = [], k, sc = 0.85;
+  var rad = [1.15, 1.35, 1.05, 1.25, 0.95, 1.2, 1.0, 1.3];
+  for (k = 0; k < rad.length; k++) {
+    var a = (k / rad.length) * 2 * Math.PI - 0.4;
+    pts.push([c.x + rad[k] * sc * Math.cos(a), c.y + rad[k] * sc * Math.sin(a) * 0.9]);
+  }
+  return pts;
+})();
+function polyArea(p) {
+  var s = 0, n = p.length, k;
+  for (k = 0; k < n; k++) {
+    var a = p[k], b = p[(k + 1) % n];
+    s += a[0] * b[1] - b[0] * a[1];
+  }
+  return Math.abs(s) / 2;
+}
+function inPoly(x, y, p) {
+  var inside = false, n = p.length, i, j;
+  for (i = 0, j = n - 1; i < n; j = i++) {
+    var xi = p[i][0], yi = p[i][1], xj = p[j][0], yj = p[j][1];
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+  }
+  return inside;
+}
+var BLOB_TILE = 0.4;
+/* every 0.4-unit square whose centre sits inside the blob → its 4 corners */
+var BLOB_TILES = (function () {
+  var t = BLOB_TILE, out = [], gx, gy;
+  for (gx = -3; gx <= 6; gx++) for (gy = -2; gy <= 6; gy++) {
+    var x0 = gx * t, y0 = gy * t, cx = x0 + t / 2, cy = y0 + t / 2;
+    if (inPoly(cx, cy, BLOB))
+      out.push([[x0, y0], [x0 + t, y0], [x0 + t, y0 + t], [x0, y0 + t]]);
+  }
+  return out;
+})();
+var BLOB_N = BLOB_TILES.length;              /* how many half-squares tile it */
+var DBL = STRETCH2;                          /* the canonical area-2 machine */
+
+/* ---------------- step5 object = Measure (now step #10) — area, then its name ---------------- */
+var step5 = {
+  stage: 0, busy: false, tiling: false, tstage: '', pills: [],
+  enter: function () {
+    this.stage = 0; this.busy = false; this.tiling = false;
+    vg.setConfig({
+      draggableI: true, draggableJ: true,
+      showMatrix: false, showArea: true, showLabels: true, showCoords: false,
+      showSnap: true, showReset: true, snap: true, ghost: null, pre: null
+    });
+    vgGo(IDENTITY);
+    setStepText('Step 10 · Measure', 'Before we compute area, feel it. The yellow patch is what your two arrows span &mdash; its area is the number on the chip. Drag the arrows and watch it change.', 'Make the area 2.');
+    this.buildStrip();
+    feed('');
+    setButton('Continue', false, advance);
+  },
+  buildStrip: function () {
+    stripEl.textContent = '';
+    stripEl.hidden = false;
+    this.pills = [];
+    var names = ['Area 2', 'Area 0', 'Flip the sign'];
+    for (var i = 0; i < 3; i++) {
+      var p = mk('div', 'tpill', '<span class="tdot"></span>' + names[i]);
+      this.pills.push(p);
+      stripEl.appendChild(p);
+    }
+    this.upd();
+  },
+  upd: function () {
+    for (var i = 0; i < 3; i++) {
+      this.pills[i].className = 'tpill' + (i < this.stage ? ' done' : (i === this.stage ? ' cur' : ''));
+    }
+  },
+  /* fire only if the value holds after a short settle — passing through doesn't count */
+  settle: function (check, then) {
+    var self = this;
+    this.busy = true;
+    setTimeout(function () {
+      if (check(vg.getMatrix())) then();
+      else self.busy = false;
+    }, 550);
+  },
+  /* the chip shows the determinant rounded to 1 decimal, so it reads "2.0" for
+     any det in ≈[1.95, 2.05). Detect the goals at that SAME resolution (0.05),
+     not tighter — otherwise (with Snap off) the chip says 2.0 while the trigger
+     silently refuses to fire and the learner gets stuck. */
+  onState: function (s) {
+    if (this.busy || this.tiling || this.stage > 2) return;
+    var self = this;
+    if (this.stage === 0 && Math.abs(s.det - 2) < 0.05) {
+      this.settle(function (m) { return Math.abs(m.det - 2) < 0.05; }, function () {
+        self.busy = false; self.tiling = true;
+        ok('Area 2 &mdash; this machine doubled that yellow square. But does it double <i>everything</i>?');
+        self.tileIntro();
+      });
+    } else if (this.stage === 1 && Math.abs(s.det) < 0.05) {
+      this.settle(function (m) { return Math.abs(m.det) < 0.05; }, function () {
+        self.stage = 2; self.busy = false; self.upd();
+        ok('Area 0 &mdash; every point got squashed onto a single line.');
+        setTask('Make the area negative.');
+        feed('Drag one arrow across the other and watch the chip.');
+      });
+    } else if (this.stage === 2 && s.det < -0.05) {
+      this.settle(function (m) { return m.det < -0.05; }, function () {
+        self.stage = 3; self.upd();
+        vg.setConfig({ draggableI: false, draggableJ: false });
+        ok('Flipped &mdash; the face is mirror-side up.');
+        setTimeout(function () {
+          askQuestion({
+            eyebrow: 'A name, at last',
+            text: 'This number &mdash; the area, with a sign for the flip &mdash; is called the <b>determinant</b>. You already know everything it means.',
+            options: null,
+            btnLabel: 'Continue',
+            onDone: function () { advance(); }
+          });
+        }, 1200);
+      });
+    }
+  },
+
+  /* ===== the blob-tiling insight (3b1b): one number scales EVERY shape =====
+     Freeze the drag, swap the smiley for a lopsided blob, let the learner tile
+     it with little squares, then run the doubling machine and watch the blob
+     and all its tiles scale in lockstep. That is why a single number (the
+     determinant) describes the whole transformation, not just one square. */
+  blobPaths: function (nTiles) {
+    /* faint slate tiles first (under), then the ink blob outline on top */
+    var paths = [];
+    for (var k = 0; k < nTiles; k++) {
+      paths.push({ pts: BLOB_TILES[k], closed: true,
+        fill: COL.slate, fillOp: 0.16, stroke: '#5A7291', w: 1, op: 0.5 });
+    }
+    paths.push({ pts: BLOB, closed: true, fill: 'none', stroke: COL.ink, w: 2.5, op: 0.9 });
+    return paths;
+  },
+  tileIntro: function () {
+    this.tstage = 'intro';
+    /* show blob (no tiles yet) beside the still-visible unit-square chip; hide
+       the smiley; range 3.6 so the DOUBLED blob stays on the grid */
+    vg.setConfig({
+      draggableI: false, draggableJ: false, range: 3.6, showArea: true,
+      face: [], facePaths: this.blobPaths(0), showFace: true
+    });
+    vg.setMatrix(IDENTITY, { animate: false });
+    setStepText('Step 10 · Measure',
+      'The chip only watched that <b>one yellow square</b>. Here is a lopsided <b>blob</b> &mdash; no square in sight. Would the machine double <i>its</i> area too?',
+      null);
+    stripEl.textContent = '';
+    stripEl.hidden = false;
+    stripEl.innerHTML = '<span class="ledg n" id="blobled">blob &asymp; ' + (BLOB_N * BLOB_TILE * BLOB_TILE).toFixed(1) + '</span>';
+    feed('');
+    var self = this;
+    setButton('Tile it with squares', true, function () { self.tileNow(); });
+  },
+  tileNow: function () {
+    this.tstage = 'tiled';
+    /* fill the blob with little squares (chip retires so the tiling reads
+       cleanly) — reveal in two quick batches so it looks like it "covers" */
+    var self = this, half = Math.ceil(BLOB_N / 2);
+    vg.setConfig({ showArea: false, facePaths: this.blobPaths(half) });
+    setTimeout(function () { vg.setConfig({ facePaths: self.blobPaths(BLOB_N) }); }, 260);
+    setStepText('Step 10 · Measure',
+      'Every tile is just a <b>shrunk copy of that yellow square</b> &mdash; and the grid lines stay parallel and evenly spaced, so whatever the machine does to one square it does to <i>all</i> of them.',
+      null);
+    feed('Roughly ' + BLOB_N + ' little squares fill the blob. Now run the machine.');
+    setButton('Run the machine', true, function () { self.tileRun(); });
+  },
+  tileRun: function () {
+    if (this.busy) return;
+    this.busy = true; this.tstage = 'run';
+    setButton('Run the machine', false, null);
+    feed('Watch every tile widen by the same factor&hellip;');
+    /* animate identity → the doubling machine; blob + all tiles scale together */
+    vg.setMatrix(DBL, { animate: true, duration: 1200 });
+    var self = this;
+    setTimeout(function () { self.tileDone(); }, 1450);
+  },
+  tileDone: function () {
+    this.busy = false; this.tstage = 'done';
+    $('blobled').innerHTML = 'blob &asymp; ' + (BLOB_N * BLOB_TILE * BLOB_TILE).toFixed(1) +
+      ' &rarr; <b>' + (BLOB_N * BLOB_TILE * BLOB_TILE * 2).toFixed(1) + '</b>';
+    ok('The blob doubled too &mdash; because it is <i>made of</i> squares, and each one doubled. <b>One number scales every shape.</b> That is why a single number can describe the whole machine.');
+    var self = this;
+    setButton('Keep measuring', true, function () { self.tileFinish(); });
+  },
+  /* back to the bare arrows + smiley; resume the area-0 / negative sub-goals */
+  tileFinish: function () {
+    this.tiling = false; this.busy = false; this.stage = 1;
+    vg.setConfig({
+      draggableI: true, draggableJ: true, range: 3.4, showArea: true,
+      face: null, facePaths: null, showFace: true
+    });
+    vg.setMatrix(IDENTITY, { animate: false });
+    this.buildStrip();          /* rebuild pills; mark Area 2 done, Area 0 current */
+    this.upd();
+    setStepText('Step 10 · Measure',
+      'One number, any shape. Now find the machines that do the two <i>special</i> things to area.',
+      'Make the area 0.');
+    feed('');
+    setButton('Continue', false, advance);
+  }
+};
+
+/* ---------------- step6 object = Undo (now step #5) — undo the hidden machine ---------------- */
+var step6 = {
+  puzzle: 0, hints: 2, busy: false, H: null, hintBtn: null,
+  HINTS: [
+    ['How wide is the scrambled face, compared to home?',
+     'It&rsquo;s twice too wide &mdash; pull the sideways arrow in to (0.5, 0).'],
+    ['The face took a quarter-turn to the left. Undo means a quarter-turn to the right.',
+     'Send &icirc; straight down to (0, &minus;1), and &jcirc; to (1, 0).']
+  ],
+  enter: function () {
+    this.puzzle = 0;
+    this.setup(STRETCH2, 'A hidden machine scrambled the face. Build the machine that undoes it.');
+  },
+  setup: function (H, promptText) {
+    this.H = H; this.hints = 2; this.busy = false;
+    vg.setConfig({
+      draggableI: true, draggableJ: true,
+      showMatrix: true, showArea: false, showLabels: true, showCoords: false,
+      showSnap: true, showReset: true, snap: true, ghost: IDENTITY, pre: H
+    });
+    vgGo(IDENTITY);
+    setStepText('Step 5 · Undo', promptText, 'Bring the face back to its ghost.');
+    this.buildStrip();
+    feed('');
+    setButton('Continue', false, advance);
+  },
+  buildStrip: function () {
+    stripEl.textContent = '';
+    stripEl.hidden = false;
+    var home = mk('div', 'snapslot filled', miniFaceSVG(IDENTITY) + '<span class="cap">Home</span>');
+    var scr  = mk('div', 'snapslot filled', miniFaceSVG(this.H) + '<span class="cap">Scrambled</span>');
+    stripEl.appendChild(home);
+    stripEl.appendChild(scr);
+    stripEl.appendChild(mk('span', 'sp', ''));
+    var self = this;
+    this.hintBtn = mk('button', 'btn-2nd', 'Hint (2 left)');
+    this.hintBtn.addEventListener('click', function () { self.hint(); });
+    stripEl.appendChild(this.hintBtn);
+  },
+  hint: function () {
+    if (this.hints <= 0) return;
+    var msgs = this.HINTS[this.puzzle];
+    feed(msgs[2 - this.hints]);
+    this.hints--;
+    this.hintBtn.innerHTML = this.hints > 0 ? 'Hint (1 left)' : 'No hints left';
+    if (this.hints <= 0) this.hintBtn.disabled = true;
+  },
+  onState: function (s) {
+    if (this.busy) return;
+    if (!near(mul(s, this.H), IDENTITY)) return;
+    this.busy = true;
+    var self = this;
+    if (this.puzzle === 0) {
+      ok('Unscrambled &mdash; your machine runs the stretch backwards.');
+      setTimeout(function () {
+        self.puzzle = 1;
+        self.setup(ROT90, 'Scrambled again &mdash; a different hidden machine. Undo this one too.');
+      }, 1500);
+    } else {
+      ok('Undone. Every machine so far has a backwards machine.');
+      vg.setConfig({ draggableI: false, draggableJ: false });
+      setButton('Continue', true, advance);
+    }
+  }
+};
+
+/* ---------------- step7 object = Checkpoint (now step #6) — part 1 landing ---------------- */
+var step7 = {
+  enter: function () {
+    doneArr[6] = true;
+    renderDots();
+    if (landing.dataset.card === 'p2') {
+      landing.innerHTML = PART1_END;
+      landing.dataset.card = 'p1';
+    }
+    vg.setConfig({ draggableI: false, draggableJ: false });
+    setStepText('Step 6 · Checkpoint', 'Everything so far, your hands did. Next, the numbers take over.', null);
+    feed('');
+    landing.hidden = false;
+    setButton('Start Part 2', true, advance);
+  }
+};
+
+/* ============================ part 2 ============================ */
+
+function fmtq(v) {
+  var s = (Math.round(v * 10) / 10).toString();
+  return s.replace('-', '−');
+}
+function aeq(v, t) { return Math.abs(v - t) < 0.01; }
+function parseNum(s) {
+  s = (s || '').replace(/−/g, '-').replace(/\s+/g, '');
+  if (s === '' || s === '-') return NaN;
+  var v = Number(s);
+  return isFinite(v) ? v : NaN;
+}
+function vecHTML(x, y, cx, cy) {
+  return '<span class="evec"><span class="br l"></span><span class="eg">' +
+    '<span class="' + (cx || '') + '">' + fmtq(x) + '</span>' +
+    '<span class="' + (cy || '') + '">' + fmtq(y) + '</span>' +
+    '</span><span class="br r"></span></span>';
+}
+function matHTML(mm) {
+  return '<span class="evec"><span class="br l"></span><span class="eg two">' +
+    '<span class="ci">' + fmtq(mm.ix) + '</span><span class="cj">' + fmtq(mm.jx) + '</span>' +
+    '<span class="ci">' + fmtq(mm.iy) + '</span><span class="cj">' + fmtq(mm.jy) + '</span>' +
+    '</span><span class="br r"></span></span>';
+}
+
+/* ---------------- step8 object = Recipe (now step #7) — where does the eye go? ---------------- */
+/* M8 rotates 45° and grows by √2 — a similarity, so the redrawn picture is
+   still unmistakably a face (the machine moves it without mangling it). */
+var M8  = { ix: 1, iy: 1, jx: -1, jy: 1 };
+var M8C = { ix: 1, iy: 2, jx: 2, jy: -1 };
+
+/* the big face. Two integer anchor points do the teaching:
+   an eye at exactly (2,3) and the dip of the smile at exactly (1,−1).
+   Head: ellipse centred (1.2, 1.3), rx 2, ry 2.6 — eyes at 65% height,
+   both well inside the outline. Under M8 the whole transformed face stays
+   inside range 6.5 (max |x−y| 3.4, max x+y 5.8). */
+function smileY(x) {
+  return x <= 1
+    ? -1 + 1.15 * Math.pow((1 - x) / 1.2, 2)
+    : -1 + 1.30 * Math.pow((x - 1) / 1.6, 2);
+}
+var BIGFACE = (function () {
+  var pts = [];
+  pts.push({ x: 2,   y: 3, r: 10, c: COL.ink });    /* right eye — anchor (2,3), index 0 */
+  pts.push({ x: 0.4, y: 3, r: 10, c: COL.ink });    /* left eye */
+  [-0.2, 0.4, 1, 1.8, 2.6].forEach(function (x) {   /* smile dots; dip (1,−1) = index 4 */
+    pts.push({ x: x, y: smileY(x), r: 5, c: COL.ink });
+  });
+  return pts;
+})();
+var EYE = 0, MOUTH = 4;
+var BIGFACE_PATHS = (function () {
+  var outline = [], mouth = [], k;
+  for (k = 0; k < 30; k++) {
+    var u = (k / 30) * 2 * Math.PI;
+    outline.push([1.2 + 2 * Math.cos(u), 1.3 + 2.6 * Math.sin(u)]);
+  }
+  for (k = 0; k <= 12; k++) {
+    var x = -0.2 + (2.8 * k) / 12;
+    mouth.push([x, smileY(x)]);
+  }
+  return [
+    { pts: outline, closed: true, fill: '#FCF3D6', fillOp: 0.6, stroke: COL.guess, w: 4 },
+    { pts: mouth, stroke: COL.ink, w: 3.5, op: 0.85 }
+  ];
+})();
+
+var step8 = {
+  phase: 'a1', face: null, guess: null, busy: false, si: 0, viewAfter: false, tries: 0, bt: null,
+
+  enter: function () {
+    this.phase = 'a1'; this.guess = null; this.busy = false; this.si = 0; this.viewAfter = false;
+    this.tries = 0; this.bt = null;
+    this.face = BIGFACE.map(function (d) { var o = {}; for (var q in d) o[q] = d[q]; return o; });
+    this.face[EYE].pulse = true;
+    vg.setConfig({
+      draggableI: false, draggableJ: false,
+      showMatrix: true, showArea: false, showLabels: true, showCoords: false,
+      showSnap: false, showReset: false, snap: true, ghost: null, pre: null,
+      showFace: true, showTips: true, range: 6.5, showStaticGrid: false,
+      face: this.face.slice(), facePaths: BIGFACE_PATHS,
+      marker: { x: 2, y: 3, label: '(2, 3)', labelOnly: true },
+      onArrowTap: function (k) { step8.tapArrow(k); },
+      onGridTap: null
+    });
+    vg.setMatrix(IDENTITY);
+    this.buildStrip();
+    setStepText('Step 7 · The recipe',
+      'Part 1 you did with your hands. Part 2, you learn what the numbers <i>compute</i> &mdash; starting with one point. The blinking eye sits at (2, 3). A machine is about to redraw the whole face.', null);
+    feed('');
+    setButton('Run the machine', true, function () { step8.runMachine(); });
+  },
+  leave: function () { vg.clearWalk(); },
+
+  /* ---------- shared bits ---------- */
+  setDot: function (idx, props) {
+    for (var q in props) this.face[idx][q] = props[q];
+    vg.setConfig({ face: this.face.slice() });
+  },
+  setView: function (after) {
+    this.viewAfter = after;
+    var c = $('viewchip');
+    if (c) {
+      c.className = 'viewchip' + (after ? ' after' : '');
+      c.innerHTML = '<span class="vdot"></span>' + (after ? 'After the machine' : 'Before the machine');
+    }
+  },
+  buildStrip: function (extraHTML) {
+    stripEl.textContent = '';
+    stripEl.hidden = false;
+    stripEl.innerHTML = '<span class="viewchip" id="viewchip"></span>' + (extraHTML || '');
+    this.setView(this.viewAfter);
+  },
+  rowHTML: function () {
+    return '<span class="ansrow">(<input class="numin" id="ax" type="text" inputmode="numeric" autocomplete="off" aria-label="x part">,' +
+      '<input class="numin" id="ay" type="text" inputmode="numeric" autocomplete="off" aria-label="y part">)</span>' +
+      '<button class="btn-2nd btn-pm" id="apm" type="button" aria-label="flip the sign of the last-touched number">&plusmn;</button>' +
+      '<button class="btn-go btn-check" id="ago" type="button">Check</button>';
+  },
+  wireRow: function () {
+    var ax = $('ax'), ay = $('ay');
+    var last = ax;
+    [ax, ay].forEach(function (el) {
+      el.addEventListener('focus', function () { last = el; });
+      el.addEventListener('input', function () { el.classList.remove('bad'); });
+      el.addEventListener('keydown', function (e) { if (e.key === 'Enter') step8.submit(); });
+    });
+    $('apm').addEventListener('click', function () {
+      var v = (last.value || '').trim();
+      last.value = v.charAt(0) === '-' || v.charAt(0) === '−' ? v.slice(1) : '-' + v;
+      last.classList.remove('bad');
+    });
+    $('ago').addEventListener('click', function () { step8.submit(); });
+  },
+  rowSet: function (disabled, clear) {
+    ['ax', 'ay', 'ago', 'apm'].forEach(function (id) { var el = $(id); if (el) el.disabled = disabled; });
+    if (clear) {
+      if ($('ax')) { $('ax').value = ''; $('ax').classList.remove('bad'); }
+      if ($('ay')) { $('ay').value = ''; $('ay').classList.remove('bad'); }
+    }
+  },
+  addLedger: function (led) {
+    var sp = document.createElement('span');
+    sp.className = 'ledg ' + led[0];
+    sp.innerHTML = led[1];
+    stripEl.appendChild(sp);
+  },
+  tapArrow: function (k) {
+    var mm = vg.getMatrix();
+    var v = k === 'i' ? [mm.ix, mm.iy] : [mm.jx, mm.jy];
+    vg.pulse(k);
+    feed((k === 'i' ? 'î' : 'ĵ') + ' currently reaches (' + fmtq(v[0]) + ', ' + fmtq(v[1]) + ') &mdash; ' +
+      (k === 'i' ? 'the <b class="ci">first</b>' : 'the <b class="cj">second</b>') + ' column of the machine.');
+  },
+  diag: function (mm, px, py, gx, gy) {
+    var cop = function (n) { return fmtq(n) + (Math.abs(n) === 1 ? ' copy' : ' copies'); };
+    var iX = px * mm.ix, iY = px * mm.iy;
+    var jX = py * mm.jx, jY = py * mm.jy;
+    var aX = iX + jX, aY = iY + jY;
+    if (aeq(gx, iX) && aeq(gy, iY)) return 'That&rsquo;s only the î leg &mdash; add ' + cop(py) + ' of ĵ.';
+    if (aeq(gx, jX) && aeq(gy, jY)) return 'That&rsquo;s only the ĵ leg &mdash; add ' + cop(px) + ' of î.';
+    if (aeq(gx, aY) && aeq(gy, aX)) return 'Right numbers, flipped order &mdash; x first, then y.';
+    return cop(px) + ' of (' + fmtq(mm.ix) + ', ' + fmtq(mm.iy) + ') plus ' + cop(py) +
+      ' of (' + fmtq(mm.jx) + ', ' + fmtq(mm.jy) + ') &mdash; then add the parts.';
+  },
+
+  /* ---------- learner-built walks (tap chips to stack arrow-copies) ---------- */
+  hopHTML: function () {
+    return '<span class="hops">' +
+      '<button class="hopb i" type="button" data-h="i,1">+î</button>' +
+      '<button class="hopb i" type="button" data-h="i,-1">&minus;î</button>' +
+      '<button class="hopb j" type="button" data-h="j,1">+ĵ</button>' +
+      '<button class="hopb j" type="button" data-h="j,-1">&minus;ĵ</button>' +
+      '<button class="hopb u" type="button" data-h="undo">Undo</button></span>';
+  },
+  /* target ti copies of î and tj of ĵ. known=true → the recipe was stated,
+     so overshoot feedback may name the counts */
+  startBuild: function (ti, tj, opts) {
+    var self = this;
+    this.bt = { ti: ti, tj: tj, n: 0, done: false, known: !!opts.known, cb: opts.onDone };
+    vg.hopStart({ counter: true });
+    stripEl.querySelectorAll('.hopb').forEach(function (b) {
+      b.addEventListener('click', function () {
+        if (!self.bt || self.bt.done) return;
+        if (b.getAttribute('data-h') === 'undo') {
+          if (vg.hopUndo()) { feed(''); self.buildTick(); }
+          return;
+        }
+        var h = b.getAttribute('data-h').split(',');
+        if (vg.hop(h[0], +h[1]) === 'out') {
+          feed('Off the map &mdash; Undo, or head back the other way.', 'warn');
+          return;
+        }
+        self.buildTick();
+      });
+    });
+  },
+  buildTick: function () {
+    var st = vg.hopState(), bt = this.bt;
+    if (!st || !bt || bt.done) return;
+    bt.n++;
+    if (st.ci === bt.ti && st.cj === bt.tj) {
+      bt.done = true;
+      stripEl.querySelectorAll('.hopb').forEach(function (b) { b.disabled = true; });
+      bt.cb(st);
+      return;
+    }
+    if (bt.known) {
+      if ((bt.ti >= 0 && st.ci < 0) || (bt.ti < 0 && st.ci > 0) ||
+          (bt.tj >= 0 && st.cj < 0) || (bt.tj < 0 && st.cj > 0))
+        feed('Wrong direction &mdash; this walk needs î &times; ' + fmtq(bt.ti) + ', ĵ &times; ' + fmtq(bt.tj) + '.', 'warn');
+      else if (Math.abs(st.ci) > Math.abs(bt.ti))
+        feed('That&rsquo;s î &times; ' + fmtq(st.ci) + ' &mdash; this walk uses î &times; ' + fmtq(bt.ti) + '. Undo one.', 'warn');
+      else if (Math.abs(st.cj) > Math.abs(bt.tj))
+        feed('That&rsquo;s ĵ &times; ' + fmtq(st.cj) + ' &mdash; this walk uses ĵ &times; ' + fmtq(bt.tj) + '. Undo one.', 'warn');
+    } else if (bt.n === 8) {
+      feed('Stuck? The eye is <b class="ci">2 î-hops</b> across and <b class="cj">3 ĵ-hops</b> up &mdash; Undo any strays.', 'warn');
+    }
+  },
+  /* fill the answer row for the learner and mark it as shown */
+  showRow: function (x, y) {
+    this.rowSet(true, false);
+    $('ax').value = fmtq(x); $('ay').value = fmtq(y);
+    ['ax', 'ay'].forEach(function (id) {
+      $(id).classList.remove('bad'); $(id).classList.add('shown');
+    });
+  },
+
+  /* ---------- 8a: run the machine, then rewind to build the walk ---------- */
+  runMachine: function () {
+    if (this.busy) return;
+    this.busy = true;
+    this.setDot(EYE, { hidden: true, pulse: false });
+    vg.setConfig({ marker: null });
+    vgGo(M8);
+    this.setView(true);
+    setButton('Continue', false, null);
+    var self = this;
+    setTimeout(function () {
+      self.busy = false;
+      self.phase = 'b1';
+      self.setDot(EYE, { hidden: false, pulse: true });
+      vgGo(IDENTITY);
+      self.setView(false);
+      setStepText('Step 7 · The recipe',
+        'Every point moved &mdash; including the eye. Back before the machine. <b>Walk from (0, 0) to the eye</b> by stacking copies of the two arrows.', null);
+      feed('');
+      self.buildStrip(self.hopHTML());
+      self.startBuild(2, 3, { known: false, onDone: function () { self.builtEye(); } });
+    }, 850);
+  },
+
+  /* ---------- 8b: coordinates are instructions ---------- */
+  builtEye: function () {
+    vg.hopLand({ endLabel: '(2, 3)' });
+    ok('You used <b class="ci">2 copies of î</b> and <b class="cj">3 of ĵ</b> &mdash; the address (2, 3) was a walking recipe all along. Recipes, not positions &mdash; that&rsquo;s what coordinates are. Next, watch what a machine does to the recipe.');
+    setButton('Continue', true, advance);
+  },
+
+  /* ---------- step 9 entry: same recipe, new arrows ----------
+     Split out of the old mega-step 8. step9 (below) delegates its enter here;
+     the big-face context is re-established because enterStep's baseline wiped it. */
+  theTrick: function () {
+    this.phase = 'c1';
+    this.busy = false; this.si = 0; this.tries = 0; this.bt = null; this.viewAfter = false;
+    /* rebuild the big face from scratch (eye visible, not pulsing) */
+    this.face = BIGFACE.map(function (d) { var o = {}; for (var q in d) o[q] = d[q]; return o; });
+    vg.setConfig({
+      draggableI: false, draggableJ: false,
+      showMatrix: true, showArea: false, showLabels: true, showCoords: false,
+      showSnap: false, showReset: false, snap: true, ghost: null, pre: null,
+      showFace: true, showTips: true, range: 6.5, showStaticGrid: false,
+      face: this.face.slice(), facePaths: BIGFACE_PATHS, marker: null,
+      onArrowTap: function (k) { step8.tapArrow(k); }, onGridTap: null
+    });
+    vg.setMatrix(IDENTITY);
+    this.buildStrip();
+    setStepText('Step 8 · Multiply a point',
+      'In Step 7 you found the eye&rsquo;s recipe: <b class="ci">î × 2</b>, <b class="cj">ĵ × 3</b>. Here is the trick that runs a machine: it moves the <b>arrows</b> &mdash; but the recipe stays the same, now measured with the new arrows.', null);
+    feed('');
+    setButton('Run the machine', true, function () { step8.trickRun(); });
+  },
+  trickRun: function () {
+    if (this.busy) return;
+    this.busy = true;
+    setButton('Run the machine', false, null);
+    this.setDot(EYE, { hidden: true, pulse: false });
+    vgGo(M8);
+    this.setView(true);
+    var self = this;
+    setTimeout(function () {
+      self.busy = false;
+      setStepText('Step 8 · Multiply a point',
+        'Same recipe &mdash; <b class="ci">î × 2</b>, <b class="cj">ĵ × 3</b> &mdash; but the arrows are new. <b>Build the walk yourself.</b>', null);
+      self.buildStrip(self.hopHTML());
+      self.startBuild(2, 3, { known: true, onDone: function () { self.builtTrick(); } });
+    }, 900);
+  },
+  builtTrick: function () {
+    vg.hopLand(); /* no label — the exact coordinates are the learner's next job */
+    ok('Felt it? That spot is where the eye belongs. Now pin down its exact address.');
+    setButton('Pin down the numbers', true, function () {
+      step8.phase = 'c2'; step8.si = 0; step8.askSub();
+    });
+  },
+  SUBS: [
+    { t: 'Your walk ends where the eye belongs &mdash; but where is that, exactly? First leg: <b class="ci">your 2 copies of new î (1, 1)</b> reached&hellip;?',
+      a: [2, 2], ledger: ['i', '2·î = (2, 2)'],
+      rw: [2, 0], rl: '(2, 2)',
+      show: 'Here it is: <b class="ci">two copies of (1, 1)</b> &mdash; double each part &mdash; is (2, 2).',
+      wrong: function (x, y) {
+        if (aeq(x, 1) && aeq(y, 1)) return 'That&rsquo;s one copy. Two copies: double both parts of (1, 1).';
+        return 'Two copies of (1, 1) &mdash; double each part.';
+      } },
+    { t: 'Second leg: <b class="cj">your 3 copies of new ĵ (−1, 1)</b> added&hellip;?',
+      a: [-3, 3], ledger: ['j', '3·ĵ = (−3, 3)'],
+      rw: [0, 3], rl: '(−3, 3)',
+      show: 'Here it is: <b class="cj">three copies of (&minus;1, 1)</b> &mdash; triple each part &mdash; is (&minus;3, 3).',
+      wrong: function (x, y) {
+        if (aeq(x, -1) && aeq(y, 1)) return 'That&rsquo;s one copy. Three copies: triple both parts of (&minus;1, 1).';
+        if (aeq(x, 3) && aeq(y, 3)) return 'Watch the sign &mdash; the new ĵ points left: its x-part is &minus;1.';
+        return 'Three copies of (&minus;1, 1) &mdash; triple each part.';
+      } },
+    { t: 'Add the legs: (<b class="ci">2, 2</b>) + (<b class="cj">−3, 3</b>) &mdash; the eye&rsquo;s new address is&hellip;?',
+      a: [-1, 5],
+      show: 'Part by part: x is 2 &minus; 3 = &minus;1, y is 2 + 3 = 5 &mdash; the eye lands at (&minus;1, 5).',
+      wrong: function (x, y) {
+        if (aeq(x, 2) && aeq(y, 2)) return 'That&rsquo;s only the î leg &mdash; add the ĵ leg (&minus;3, 3).';
+        if (aeq(x, -3) && aeq(y, 3)) return 'That&rsquo;s only the ĵ leg &mdash; add the î leg (2, 2).';
+        return 'Add the chips part by part: (2, 2) + (&minus;3, 3).';
+      } }
+  ],
+  askSub: function () {
+    var s = this.SUBS[this.si];
+    this.tries = 0;
+    setStepText('Step 8 · Multiply a point', s.t, null);
+    this.buildStrip(this.rowHTML());
+    this.wireRow();
+    for (var k = 0; k < this.si; k++) if (this.SUBS[k].ledger) this.addLedger(this.SUBS[k].ledger);
+    feed('');
+    setButton('Continue', false, advance);
+    $('ax').focus();
+  },
+  /* two misses on a leg → show it: replay that leg on the grid, fill the
+     row, then move on. Nobody gets stranded on arithmetic. */
+  showSub: function (s) {
+    var self = this;
+    this.busy = true;
+    this.showRow(s.a[0], s.a[1]);
+    feed(s.show);
+    var fin = function () {
+      self.busy = false;
+      setButton('Got it', true, function () {
+        self.si++;
+        if (self.si < self.SUBS.length) self.askSub();
+        else self.revealEye();
+      });
+    };
+    if (s.rw) vg.walk(s.rw[0], s.rw[1], { counter: true, endLabel: s.rl, onDone: fin });
+    else setTimeout(fin, 600);
+  },
+  revealEye: function () {
+    this.phase = 'c4';
+    this.busy = true;
+    this.rowSet(true, false);
+    this.setDot(EYE, { hidden: false, pulse: true });
+    vg.setConfig({ marker: null });
+    var self = this;
+    vg.walk(2, 3, { counter: true, resultant: true, endLabel: '(−1, 5)', onDone: function () {
+      self.busy = false;
+      ok('The recipe lands exactly on (&minus;1, 5).');
+      setButton('Name this move', true, function () { step8.nameIt(); });
+    } });
+  },
+
+  /* ---------- 8d: name it ---------- */
+  nameIt: function () {
+    var eq = '<div class="eq">' +
+      matHTML(M8) + '<span class="op">·</span>' + vecHTML(2, 3, 'cnt-i', 'cnt-j') + '<span class="op">=</span>' +
+      '<span class="cnt-i">2</span><span class="op">·</span>' + vecHTML(1, 1, 'ci', 'ci') + '<span class="op">+</span>' +
+      '<span class="cnt-j">3</span><span class="op">·</span>' + vecHTML(-1, 1, 'cj', 'cj') + '<span class="op">=</span>' +
+      vecHTML(-1, 5) +
+      '</div><div class="eqcap">This is <b>matrix&ndash;vector multiplication</b>: <b class="ci">2 copies of the first column</b> + <b class="cj">3 copies of the second</b> &mdash; exactly the walks you built. The brackets are just the shorthand. <b>Remember this rule &mdash; every step from here uses it.</b></div>';
+    feed('');
+    askQuestion({
+      eyebrow: 'A name for the recipe',
+      text: eq,
+      options: null,
+      btnLabel: 'Practice it',
+      onDone: function () { step8.practice1(); }
+    });
+  },
+
+  /* ---------- 8e: practice with purpose ---------- */
+  practice1: function () {
+    this.phase = 'e1';
+    this.tries = 0;
+    vg.clearWalk();
+    this.setDot(EYE, { pulse: false });
+    vg.setConfig({ marker: null });
+    setStepText('Step 8 · Practice',
+      'The dip of the smile sits at (<b class="ci">1</b>, <b class="cj">−1</b>) in the original picture. Where does the computer draw it?', null);
+    this.buildStrip(this.rowHTML());
+    this.wireRow();
+    feed('');
+    setButton('Continue', false, advance);
+    $('ax').focus();
+  },
+  practice2: function () {
+    this.phase = 'e2a';
+    this.busy = true;
+    this.setDot(MOUTH, { pulse: false });
+    vg.clearWalk();
+    vgGo(M8C);
+    vg.setConfig({ showFace: false, marker: { x: 2, y: 1, label: '(2, 1)' } });
+    setStepText('Step 8 · Practice',
+      'A brand-new machine. Where does (<b class="ci">2</b>, <b class="cj">1</b>) land? <b>Feel it first &mdash; build the recipe.</b>', null);
+    feed('');
+    setButton('Continue', false, advance);
+    var self = this;
+    setTimeout(function () {
+      self.busy = false;
+      self.buildStrip(self.hopHTML());
+      self.startBuild(2, 1, { known: true, onDone: function () { self.builtP2(); } });
+    }, 700);
+  },
+  builtP2: function () {
+    vg.hopLand();
+    ok('You can <i>see</i> roughly where it lands. Now nail the exact numbers.');
+    setStepText('Step 8 · Practice',
+      'You walked (<b class="ci">2</b>, <b class="cj">1</b>) along the new arrows &mdash; type where the walk ends.', null);
+    this.phase = 'e2';
+    this.tries = 0;
+    this.buildStrip(this.rowHTML() + '<button class="btn-2nd" id="hintw" type="button">Replay my walk</button>');
+    this.wireRow();
+    $('hintw').addEventListener('click', function () {
+      if (!step8.busy) vg.walk(2, 1, { counter: true });
+    });
+    setButton('Continue', false, advance);
+    $('ax').focus();
+  },
+  submit: function () {
+    if (this.busy) return;
+    var x = parseNum($('ax').value), y = parseNum($('ay').value);
+    if (isNaN(x) || isNaN(y)) {
+      feed('Enter both numbers &mdash; x, then y.', 'warn');
+      if (isNaN(x)) $('ax').classList.add('bad');
+      if (isNaN(y)) $('ay').classList.add('bad');
+      return;
+    }
+    var self = this;
+    if (this.phase === 'c2') {
+      var s = this.SUBS[this.si];
+      if (aeq(x, s.a[0]) && aeq(y, s.a[1])) {
+        this.si++;
+        if (this.si < this.SUBS.length) this.askSub();
+        else this.revealEye();
+      } else if (++this.tries >= 2) {
+        this.showSub(s);
+      } else {
+        feed(s.wrong(x, y), 'warn');
+        $('ax').classList.add('bad'); $('ay').classList.add('bad');
+      }
+    } else if (this.phase === 'e1') {
+      if (aeq(x, 2) && aeq(y, 0)) {
+        this.finishE1(true);
+      } else if (++this.tries >= 2) {
+        this.showRow(2, 0);
+        feed('Watch: <b class="ci">1 copy of (1, 1)</b> + <b class="cj">&minus;1 copy of (&minus;1, 1)</b> &mdash; (1 + 1, 1 &minus; 1) = (2, 0).');
+        this.finishE1(false);
+      } else {
+        feed(this.diag(M8, 1, -1, x, y), 'warn');
+        $('ax').classList.add('bad'); $('ay').classList.add('bad');
+      }
+    } else if (this.phase === 'e2') {
+      if (aeq(x, 4) && aeq(y, 3)) {
+        this.finishE2(true);
+      } else if (++this.tries >= 2) {
+        this.showRow(4, 3);
+        feed('Watch: <b class="ci">2 copies of (1, 2)</b> + <b class="cj">1 copy of (2, &minus;1)</b> &mdash; (2 + 2, 4 &minus; 1) = (4, 3).');
+        this.finishE2(false);
+      } else {
+        feed(this.diag(M8C, 2, 1, x, y), 'warn');
+        $('ax').classList.add('bad'); $('ay').classList.add('bad');
+      }
+    }
+  },
+  finishE1: function (earned) {
+    var self = this;
+    this.busy = true;
+    this.rowSet(true, false);
+    vg.walk(1, -1, { counter: true, resultant: true, endLabel: '(2, 0)', onDone: function () {
+      self.busy = false;
+      self.setDot(MOUTH, { pulse: true });
+      if (earned) ok('And the smile snaps into place.');
+      setButton('One more', true, function () { step8.practice2(); });
+    } });
+  },
+  finishE2: function (earned) {
+    var self = this;
+    this.busy = true;
+    this.rowSet(true, false);
+    vg.walk(2, 1, { counter: true, resultant: true, endLabel: '(4, 3)', onDone: function () {
+      self.busy = false;
+      if (earned) ok('You can now push <i>any</i> point through <i>any</i> machine. Next: what if you run two machines in a row?');
+      else feed('So (2, 1) lands at (4, 3). Next: what if you run two machines in a row?');
+      setButton('Continue', true, advance);
+    } });
+  }
+};
+
+/* ---------------- step9 object = Multiply shell (now step #8) — split from old mega-step 8 ----------------
+   All the flow lives on step8 (theTrick onward). This shell just hands control
+   over; step8.theTrick re-establishes the big-face context that enterStep wiped. */
+var step9 = {
+  enter: function () { step8.theTrick(); },
+  leave: function () { vg.clearWalk(); }
+};
+
+/* shared part-2 UI: a labelled mini-matrix chip, and generic numeric wiring */
+function mchip(label, mm) {
+  return '<span class="mchip"><span class="mlb">' + label + '</span>' + matHTML(mm) + '</span>';
+}
+function wireNumRow(inputs, pmId, goId, submitFn) {
+  var last = $(inputs[0]);
+  inputs.forEach(function (id) {
+    var el = $(id);
+    el.addEventListener('focus', function () { last = el; });
+    el.addEventListener('input', function () { el.classList.remove('bad'); });
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter') submitFn(); });
+  });
+  if (pmId && $(pmId)) $(pmId).addEventListener('click', function () {
+    var v = (last.value || '').trim();
+    last.value = v.charAt(0) === '-' || v.charAt(0) === '−' ? v.slice(1) : '-' + v;
+    last.classList.remove('bad');
+    last.focus();
+  });
+  $(goId).addEventListener('click', submitFn);
+}
+
+/* ---------------- step10compose object = Compose (now step #9) — two machines, one machine ---------------- */
+var A9 = STRETCH2, B9 = ROT90;
+var AB9 = mul(A9, B9);   /* columns (0,1) and (−2,0) */
+var BA9 = mul(B9, A9);   /* columns (0,2) and (−1,0) — the order lesson */
+
+var step10compose = {
+  phase: 'a', busy: false, tries: 0,
+
+  enter: function () {
+    this.phase = 'a'; this.busy = false; this.tries = 0;
+    vg.setConfig({
+      draggableI: false, draggableJ: false,
+      showMatrix: false, showArea: false, showLabels: true, showCoords: false,
+      showSnap: false, showReset: false, snap: true, ghost: null, pre: null,
+      range: 3.8
+    });
+    vgGo(IDENTITY);
+    stripEl.hidden = false;
+    stripEl.innerHTML = mchip('spin B', B9) + '<span class="thenlb">then</span>' + mchip('stretch A', A9);
+    setStepText('Step 9 · Compose two machines',
+      'Step 8 pushed one <i>point</i> through one machine. Now run two whole machines back-to-back: <b>spin B, then stretch A</b>. Watch the picture take two moves.', null);
+    feed('');
+    setButton('Run both machines', true, function () { step10compose.runBoth(); });
+  },
+  runBoth: function () {
+    if (this.busy) return;
+    this.busy = true;
+    setButton('Run both machines', false, null);
+    vgGo(B9);
+    feed('Machine B spins the picture&hellip;');
+    var self = this;
+    setTimeout(function () {
+      vgGo(AB9);
+      feed('&hellip;and machine A stretches the spun picture.');
+      setTimeout(function () { self.busy = false; self.askOne(); }, 1400);
+    }, 1400);
+  },
+  askOne: function () {
+    var self = this;
+    vg.setGhost(AB9); /* freeze the two-step result as the target picture */
+    askQuestion({
+      eyebrow: 'Think',
+      text: 'That took two moves. Could <b>one</b> machine &mdash; a single matrix &mdash; make the exact same picture in one move?',
+      options: [
+        { cap: 'Yes &mdash; some single machine lands the same picture.',
+          fb: 'Right. A machine is nothing but &ldquo;where î and ĵ end up&rdquo; &mdash; and you can track exactly where they ended up.' },
+        { cap: 'No &mdash; two moves can never equal one.',
+          fb: 'Look at the arrows: a machine only stores where î and ĵ <i>end up</i>. One machine can send them straight there.' }
+      ],
+      correct: 0,
+      btnLabel: 'Land the arrows yourself',
+      onDone: function () { self.landIt(); }
+    });
+  },
+
+  /* INTERACTIVE TRACE (user spec): forget the two steps — the product IS the
+     single start→end move. Learner drags î and ĵ by hand to where they finally
+     land, against the frozen two-move ghost, with persistent start→end guides.
+     Where the arrows come to rest ARE the columns of the product. */
+  landIt: function () {
+    this.phase = 'l'; this.busy = false; this.landed = { i: false, j: false };
+    qwrap.hidden = true;
+    var TI = { x: 0, y: 1 }, TJ = { x: -2, y: 0 }; /* final landing spots */
+    vg.setMatrix(IDENTITY, { animate: false });
+    vg.setGhost(AB9);                 /* the frozen two-move picture, behind */
+    stripEl.innerHTML = mchip('spin B', B9) + '<span class="thenlb">then</span>' + mchip('stretch A', A9);
+    setStepText('Step 9 · Compose two machines',
+      'Forget the two steps &mdash; a machine only remembers <b>where î and ĵ finally land</b>. So drag <b class="ci">î</b> and <b class="cj">ĵ</b> by hand to where the whole spin-then-stretch leaves them. The dotted guides show the start&rarr;end jump.', null);
+    feed('Drag each arrow onto its faint target. Snap is on.');
+    setButton('Continue', false, null);
+    /* drag detection happens in this.onState via the engine dispatcher —
+       NEVER by writing cfg.onChange (that slot is the engine's) */
+    vg.setConfig({
+      draggableI: true, draggableJ: true, snap: true,
+      showTips: true, showCoords: true, showLabels: true
+    });
+    /* persistent start→end cue: ghost start arrows + dotted guide to targets +
+       a labelled dot at each final landing spot. Redrawn once; static. */
+    vg.overlay(function (g, toPx) {
+      var o = toPx(0, 0);
+      [{ from: { x: 1, y: 0 }, to: TI, col: COL.i.main, nm: 'î lands' },
+       { from: { x: 0, y: 1 }, to: TJ, col: COL.j.main, nm: 'ĵ lands' }
+      ].forEach(function (t) {
+        var e = toPx(t.to.x, t.to.y);
+        /* faint start arrow (where the basis arrow begins) */
+        var s0 = toPx(t.from.x, t.from.y);
+        svgEl('line', { x1: o.x, y1: o.y, x2: s0.x, y2: s0.y, stroke: t.col, 'stroke-width': 3, 'stroke-opacity': 0.22, 'stroke-linecap': 'round' }, g);
+        /* dotted start→end guide */
+        svgEl('line', { x1: s0.x, y1: s0.y, x2: e.x, y2: e.y, stroke: t.col, 'stroke-width': 2, 'stroke-dasharray': '2 6', 'stroke-opacity': 0.55, 'stroke-linecap': 'round' }, g);
+        /* target ring at the landing spot */
+        svgEl('circle', { cx: e.x, cy: e.y, r: 13, fill: 'none', stroke: t.col, 'stroke-width': 2.5, 'stroke-dasharray': '3 4', 'stroke-opacity': 0.8 }, g);
+        var lbl = svgEl('text', {
+          x: e.x, y: e.y - 22, 'text-anchor': 'middle',
+          'font-family': "'Space Grotesk',sans-serif", 'font-size': 14, 'font-weight': 700,
+          fill: t.col, 'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 5, 'stroke-linejoin': 'round'
+        }, g);
+        lbl.textContent = t.nm;
+      });
+    });
+  },
+  /* landing detection — the engine dispatcher calls this on every render.
+     Only live during the landIt phase; the targets are AB9's columns. */
+  onState: function (s) {
+    if (this.phase !== 'l' || this.busy) return;
+    this.landed.i = aeq(s.ix, AB9.ix) && aeq(s.iy, AB9.iy);
+    this.landed.j = aeq(s.jx, AB9.jx) && aeq(s.jy, AB9.jy);
+    if (this.landed.i && this.landed.j) this.landedBoth();
+  },
+
+  /* both arrows parked on their targets — snap them clean, celebrate, and let
+     the learner read the four numbers straight off the landings. */
+  landedBoth: function () {
+    if (this.busy) return;
+    this.busy = true;
+    var self = this;
+    vg.setConfig({ draggableI: false, draggableJ: false });
+    vg.setMatrix(AB9, { animate: true });   /* snap dead-clean onto ghost */
+    vg.pulse('i'); vg.pulse('j');
+    ok('Dead on the ghost. You never re-ran anything &mdash; you just parked î and ĵ where they end up. <b>That single start&rarr;end move is the product.</b>');
+    setTimeout(function () {
+      setButton('Read off the numbers', true, function () { self.writeIt(); });
+    }, 400);
+  },
+
+  /* now write the four numbers you just SAW the arrows land on. */
+  writeIt: function () {
+    this.phase = 'g'; this.tries = 0; this.busy = false;
+    vg.overlay(null);
+    vg.setConfig({ draggableI: false, draggableJ: false, showCoords: false });
+    vgGo(IDENTITY);
+    setStepText('Step 9 · Compose two machines',
+      'Write the machine down: <b class="ci">î</b>&rsquo;s landing spot <b>(0, 1)</b> is the first column, <b class="cj">ĵ</b>&rsquo;s landing spot <b>(&minus;2, 0)</b> is the second. Type where you just watched them land.', null);
+    stripEl.innerHTML = mchip('spin B', B9) + '<span class="thenlb">then</span>' + mchip('stretch A', A9) +
+      '<span class="ansrow"><span class="mbr l"></span><span class="mgrid2">' +
+      '<input class="numin ci" id="m11" type="text" inputmode="numeric" autocomplete="off" aria-label="row 1, column 1">' +
+      '<input class="numin cj" id="m12" type="text" inputmode="numeric" autocomplete="off" aria-label="row 1, column 2">' +
+      '<input class="numin ci" id="m21" type="text" inputmode="numeric" autocomplete="off" aria-label="row 2, column 1">' +
+      '<input class="numin cj" id="m22" type="text" inputmode="numeric" autocomplete="off" aria-label="row 2, column 2">' +
+      '</span><span class="mbr r"></span></span>' +
+      '<button class="btn-2nd btn-pm" id="pm9" type="button" aria-label="flip the sign of the last-touched number">&plusmn;</button>' +
+      '<button class="btn-go btn-check" id="go9" type="button">Check</button>' +
+      '<button class="btn-2nd" id="rep9" type="button">Replay the run</button>';
+    wireNumRow(['m11', 'm12', 'm21', 'm22'], 'pm9', 'go9', function () { step10compose.check22(); });
+    $('rep9').addEventListener('click', function () { step10compose.replay(); });
+    feed('');
+    setButton('Continue', false, null);
+    $('m11').focus();
+  },
+  /* re-watch both machines with live coordinate tips, then settle back home */
+  replay: function () {
+    if (this.busy) return;
+    this.busy = true;
+    var self = this;
+    vg.setConfig({ showTips: true });
+    vgGo(B9);
+    setTimeout(function () {
+      vgGo(AB9);
+      setTimeout(function () {
+        vgGo(IDENTITY);
+        setTimeout(function () {
+          vg.setConfig({ showTips: false });
+          self.busy = false;
+        }, 800);
+      }, 1600);
+    }, 1300);
+  },
+  check22: function () {
+    if (this.busy) return;
+    var ids = ['m11', 'm12', 'm21', 'm22'];
+    var want = [AB9.ix, AB9.jx, AB9.iy, AB9.jy]; /* row-major */
+    var got = ids.map(function (id) { return parseNum($(id).value); });
+    if (got.some(function (v) { return isNaN(v); })) {
+      feed('Fill in all four boxes.', 'warn');
+      ids.forEach(function (id, k) { if (isNaN(got[k])) $(id).classList.add('bad'); });
+      return;
+    }
+    var badIdx = [];
+    ids.forEach(function (id, k) { if (!aeq(got[k], want[k])) { badIdx.push(k); $(id).classList.add('bad'); } });
+    if (!badIdx.length) {
+      ids.forEach(function (id) { $(id).disabled = true; });
+      ok('That&rsquo;s a machine nobody handed you &mdash; you computed it.');
+      this.payoff();
+      return;
+    }
+    if (++this.tries >= 2) { this.show22(); return; }
+    if (aeq(got[0], want[1]) && aeq(got[2], want[3]) && aeq(got[1], want[0]) && aeq(got[3], want[2])) {
+      feed('Columns swapped &mdash; <b class="ci">î&rsquo;s landing spot</b> goes in the FIRST column.', 'warn');
+      return;
+    }
+    /* name the column that went wrong, then auto-replay the evidence */
+    if (badIdx.indexOf(0) >= 0 || badIdx.indexOf(2) >= 0) {
+      feed('Follow <b class="ci">î</b>: the spin drops it at (0, 1), and the stretch only doubles x &mdash; watch the replay.', 'warn');
+    } else {
+      feed('Follow <b class="cj">ĵ</b>: the spin drops it at (&minus;1, 0), then the stretch doubles x to &minus;2 &mdash; watch the replay.', 'warn');
+    }
+    this.replay();
+  },
+  show22: function () {
+    var vals = [AB9.ix, AB9.jx, AB9.iy, AB9.jy];
+    ['m11', 'm12', 'm21', 'm22'].forEach(function (id, k) {
+      var el = $(id);
+      el.value = fmtq(vals[k]);
+      el.classList.remove('bad');
+      el.classList.add('shown');
+      el.disabled = true;
+    });
+    feed('Here it is: spin-then-stretch leaves <b class="ci">î at (0, 1)</b> and <b class="cj">ĵ at (&minus;2, 0)</b> &mdash; the landings are the columns.');
+    setButton('Run my machine', true, function () { step10compose.payoff(); });
+  },
+  /* the payoff: the learner's computed machine, one move, onto the ghost */
+  payoff: function () {
+    this.phase = 'p';
+    this.busy = true;
+    ['go9', 'pm9', 'rep9'].forEach(function (id) { var el = $(id); if (el) el.disabled = true; });
+    setStepText('Step 9 · Compose two machines', 'Your machine, in <b>one move</b> &mdash; against the frozen two-move ghost.', null);
+    setButton('Continue', false, null);
+    var self = this;
+    setTimeout(function () {
+      stripEl.innerHTML = mchip('your machine', AB9);
+      vg.setConfig({ showTips: true });
+      vgGo(AB9);
+      setTimeout(function () {
+        self.busy = false;
+        ok('One move &mdash; dead on the ghost. Two machines just became one.');
+        setButton('Name this', true, function () { self.nameIt(); });
+      }, 1400);
+    }, 700);
+  },
+  nameIt: function () {
+    var eq = '<div class="eq">' + matHTML(A9) + '<span class="op">·</span>' + matHTML(B9) +
+      '<span class="op">=</span>' + matHTML(AB9) +
+      '</div><div class="eqcap">This is <b>matrix multiplication</b> &mdash; the <b>composition</b> of the two machines. Each column of B is where the spin drops an arrow; push it through A with the Step 8 recipe, and that&rsquo;s the matching column of A·B. And note: <b>A·B reads right to left</b> &mdash; B acts first.</div>';
+    askQuestion({
+      eyebrow: 'A name for what you did',
+      text: eq,
+      options: null,
+      btnLabel: 'One catch',
+      onDone: function () { step10compose.orderQ(); }
+    });
+  },
+  orderQ: function () {
+    askQuestion({
+      eyebrow: 'Order check',
+      text: 'Step 4 proved order matters &mdash; with these exact machines. In symbols: <b>B·A</b> means stretch first, <i>then</i> spin. Same four numbers as A·B?',
+      gallery: [
+        { svg: miniFaceSVG(AB9), label: 'A·B — spin, then stretch' },
+        { svg: miniFaceSVG(BA9), label: 'B·A — stretch, then spin' }
+      ],
+      options: [
+        { cap: 'Same machine either way.',
+          fb: 'The pictures disagree &mdash; wide vs tall. B·A drops î at (0, 2), not (0, 1): a different machine.' },
+        { cap: 'No &mdash; B·A is a different machine.',
+          fb: 'Right &mdash; B·A sends î to (0, 2), not (0, 1): tall, not wide. Matrix multiplication remembers order.' }
+      ],
+      correct: 1,
+      btnLabel: 'On to the last tool',
+      onDone: function () { advance(); }
+    });
+  }
+};
+
+/* ---------------- step11formula object = Formula (step #11) — the determinant formula ---------------- */
+var MD = { ix: 2, iy: 1, jx: 1, jy: 3 };  /* a=2 b=1 c=1 d=3 — det 5 */
+
+var step11formula = {
+  phase: 'a', busy: false, tries: 0, cut: 0, ledger: '', og: null, oPx: null,
+
+  enter: function () {
+    this.phase = 'a'; this.busy = false; this.tries = 0; this.cut = 0;
+    vg.setConfig({
+      draggableI: false, draggableJ: false,
+      showMatrix: true, showArea: true, showLabels: true, showCoords: false,
+      showSnap: false, showReset: false, snap: true, ghost: null, pre: null,
+      showFace: false, showTips: false, range: 4.6, showMoveGrid: false
+    });
+    vgGo(MD);
+    setStepText('Step 11 · The formula',
+      'You just <i>measured</i> area by dragging &mdash; the chip says 5. But a computer can&rsquo;t drag. Where does that 5 come from, as a calculation? <b>Trap the patch in a box.</b>', null);
+    feed('');
+    setButton('Draw the box', true, function () { step11formula.drawBox(); });
+  },
+
+  /* the six spare pieces of the (a+b)×(c+d) bounding box, a=2 b=1 c=1 d=3 */
+  PIECES: [
+    { pts: [[0, 0], [2, 0], [2, 1]], lb: '1' },
+    { pts: [[2, 0], [3, 0], [3, 1], [2, 1]], lb: '1' },
+    { pts: [[2, 1], [3, 1], [3, 4]], lb: '1½' },
+    { pts: [[1, 3], [3, 4], [1, 4]], lb: '1' },
+    { pts: [[0, 3], [1, 3], [1, 4], [0, 4]], lb: '1' },
+    { pts: [[0, 0], [1, 3], [0, 3]], lb: '1½' }
+  ],
+  drawBox: function () {
+    this.phase = 'b';
+    this.cut = 0;
+    this.ledger = '12';
+    var self = this;
+    vg.overlay(function (g, toPx) {
+      self.og = g; self.oPx = toPx;
+      var p00 = toPx(0, 0), p34 = toPx(3, 4);
+      svgEl('rect', {
+        x: p00.x, y: p34.y, width: p34.x - p00.x, height: p00.y - p34.y,
+        fill: 'none', stroke: COL.ink, 'stroke-width': 2,
+        'stroke-dasharray': '7 6', 'stroke-opacity': 0.55
+      }, g);
+      var lab = function (x, y, txt) {
+        var t = svgEl('text', {
+          x: x, y: y, 'font-family': "'Space Grotesk',sans-serif", 'font-size': 17,
+          'font-weight': 700, fill: '#4A5568', 'text-anchor': 'middle', 'dominant-baseline': 'central',
+          'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 6, 'stroke-linejoin': 'round'
+        }, g);
+        t.textContent = txt;
+      };
+      lab((p00.x + p34.x) / 2, p00.y + 24, 'a+b = 3');
+      lab(p00.x - 52, (p00.y + p34.y) / 2, 'c+d = 4');
+      self.PIECES.forEach(function (pc) {
+        var d = pc.pts.map(function (pt) {
+          var q = toPx(pt[0], pt[1]);
+          return q.x + ',' + q.y;
+        }).join(' ');
+        var poly = svgEl('polygon', {
+          points: d, fill: COL.slate, 'fill-opacity': 0.5,
+          stroke: '#5A7291', 'stroke-width': 1.5, 'class': 'cutp'
+        }, g);
+        poly.addEventListener('pointerdown', function () { self.cutPiece(pc, poly); });
+      });
+    });
+    setStepText('Step 11 · The formula',
+      'The box holds (a+b)&thinsp;&times;&thinsp;(c+d) = 3&thinsp;&times;&thinsp;4 = 12 squares &mdash; too many. <b>Tap every spare piece</b> to cut it away.', null);
+    stripEl.hidden = false;
+    stripEl.innerHTML = '<span class="ledg n" id="cutled">12</span>';
+    feed('');
+    setButton('Continue', false, null);
+  },
+  cutPiece: function (pc, poly) {
+    if (this.phase !== 'b' || poly.getAttribute('data-cut')) return;
+    poly.setAttribute('data-cut', '1');
+    poly.classList.add('cutgone');
+    var cx = 0, cy = 0;
+    pc.pts.forEach(function (pt) { cx += pt[0]; cy += pt[1]; });
+    var q = this.oPx(cx / pc.pts.length, cy / pc.pts.length);
+    var t = svgEl('text', {
+      x: q.x, y: q.y, 'font-family': "'Space Grotesk',sans-serif", 'font-size': 17,
+      'font-weight': 700, fill: '#5A7291', 'text-anchor': 'middle', 'dominant-baseline': 'central',
+      'paint-order': 'stroke', stroke: '#FFFFFF', 'stroke-width': 5, 'stroke-linejoin': 'round'
+    }, this.og);
+    t.textContent = '−' + pc.lb;
+    this.cut++;
+    this.ledger += ' &minus; ' + pc.lb;
+    $('cutled').innerHTML = this.ledger;
+    if (this.cut === this.PIECES.length) this.boxDone();
+  },
+  boxDone: function () {
+    $('cutled').innerHTML = this.ledger + ' = <b>5</b>';
+    /* outline the survivor */
+    var toPx = this.oPx, d = [[0, 0], [2, 1], [3, 4], [1, 3]].map(function (pt) {
+      var q = toPx(pt[0], pt[1]);
+      return q.x + ',' + q.y;
+    }).join(' ');
+    svgEl('polygon', { points: d, fill: 'none', stroke: '#12A66B', 'stroke-width': 3.5 }, this.og);
+    ok('Every spare piece gone &mdash; the tilted patch holds exactly 5, just as the chip said.');
+    setButton('Where is the formula?', true, function () { step11formula.formula(); });
+  },
+  formula: function () {
+    var eq = '<div class="eq"><span class="op">area of</span>' + matHTML(MD) + '<span class="op">=</span>' +
+      '<span class="ci">2</span><span class="op">·</span><span class="cj">3</span><span class="op">&minus;</span>' +
+      '<span class="cj">1</span><span class="op">·</span><span class="ci">1</span><span class="op">=</span><span>5</span>' +
+      '</div><div class="eqcap">Top-left &times; bottom-right, minus top-right &times; bottom-left. Cut the box for <i>any</i> machine ' +
+      'and the spares always cancel to the same rule: <b>det = a·d &minus; b·c</b>.</div>';
+    askQuestion({
+      eyebrow: 'The determinant formula',
+      text: eq,
+      options: null,
+      btnLabel: 'Test it',
+      onDone: function () { step11formula.verify(); }
+    });
+  },
+
+  V10: { m: { ix: 1, iy: 2, jx: 2, jy: 1 }, a: -3,
+    note: '1·1 &minus; 2·2 = &minus;3 &mdash; negative, so this machine flips space over: the mirror you just made in Step 10, now computable.',
+    wrong: function (v) {
+      if (aeq(v, 3)) return 'Magnitude right, sign wrong &mdash; 1·1 &minus; 2·2 dives below zero. Remember Step 10: flipped machines run negative.';
+      return 'a·d = 1·1 and b·c = 2·2 &mdash; subtract.';
+    } },
+  verify: function () {
+    this.phase = 'v'; this.tries = 0; this.busy = false;
+    var V = this.V10;
+    vg.overlay(null);
+    vg.setConfig({ showArea: false, range: 3.4 });
+    vgGo(V.m);
+    setStepText('Step 11 · The formula',
+      'Test drive: compute <b>a·d &minus; b·c</b> for this machine &mdash; before the area chip spills it.', null);
+    stripEl.innerHTML = mchip('machine', V.m) +
+      '<span class="ansrow">det =' +
+      '<input class="numin" id="dv" type="text" inputmode="numeric" autocomplete="off" aria-label="determinant"></span>' +
+      '<button class="btn-2nd btn-pm" id="pmd" type="button" aria-label="flip the sign">&plusmn;</button>' +
+      '<button class="btn-go btn-check" id="god" type="button">Check</button>';
+    wireNumRow(['dv'], 'pmd', 'god', function () { step11formula.checkDet(); });
+    feed('');
+    setButton('Continue', false, null);
+    $('dv').focus();
+  },
+  checkDet: function () {
+    if (this.busy) return;
+    var V = this.V10;
+    var v = parseNum($('dv').value);
+    if (isNaN(v)) { feed('Type a number.', 'warn'); $('dv').classList.add('bad'); return; }
+    if (aeq(v, V.a)) {
+      this.confirmDet(true);
+    } else if (++this.tries >= 2) {
+      $('dv').value = fmtq(V.a);
+      $('dv').classList.remove('bad');
+      $('dv').classList.add('shown');
+      feed('Here it is: ' + V.note);
+      this.confirmDet(false);
+    } else {
+      feed(V.wrong(v), 'warn');
+      $('dv').classList.add('bad');
+    }
+  },
+  confirmDet: function (earned) {
+    var V = this.V10;
+    this.busy = true;
+    ['dv', 'god', 'pmd'].forEach(function (id) { var el = $(id); if (el) el.disabled = true; });
+    vg.setConfig({ showArea: true });
+    var self = this;
+    setTimeout(function () {
+      self.busy = false;
+      if (earned) ok('The chip agrees &mdash; ' + V.note);
+      setButton('Final challenge', true, function () { step11formula.capstone(); });
+    }, 900);
+  },
+
+  /* the wrong picks teach too: a double-negative spin, and Step 7's machine */
+  CAPS: [
+    { m: { ix: 2, iy: 4, jx: 1, jy: 2 } },  /* det 0 — the flattener */
+    { m: ROT90,
+      fb: 'det = 0·0 &minus; (&minus;1)·1 = 1 &mdash; a double negative. Spinning never changes area; not the flattener.' },
+    { m: { ix: 1, iy: 1, jx: -1, jy: 1 },
+      fb: 'det = 1·1 &minus; (&minus;1)·1 = 2 &mdash; Step 7&rsquo;s machine <i>doubles</i> area. Not the flattener.' }
+  ],
+  capstone: function () {
+    this.phase = 'c';
+    this.busy = false;
+    vg.setConfig({ showArea: false, showFace: true, showMatrix: false, range: 6, showMoveGrid: true });
+    vgGo(IDENTITY);
+    setStepText('Step 11 · The formula',
+      'One of these three machines <b>flattens space</b> &mdash; det 0, the one with no undo. Use the formula to find it <i>before</i> running anything.', null);
+    stripEl.innerHTML = this.CAPS.map(function (c, k) {
+      return '<button class="rec cap10" type="button" data-k="' + k + '">' + matHTML(c.m) + '</button>';
+    }).join('');
+    var self = this;
+    stripEl.querySelectorAll('.cap10').forEach(function (b) {
+      b.addEventListener('click', function () { self.capPick(+b.getAttribute('data-k'), b); });
+    });
+    feed('');
+    setButton('Continue', false, null);
+  },
+  capPick: function (k, b) {
+    if (this.busy || this.phase !== 'c') return;
+    var c = this.CAPS[k], mm = c.m;
+    var det = mm.ix * mm.jy - mm.jx * mm.iy;
+    var line = fmtq(mm.ix) + '·' + fmtq(mm.jy) + ' &minus; ' + fmtq(mm.jx) + '·' + fmtq(mm.iy) + ' = ' + fmtq(det);
+    if (Math.abs(det) > 0.001) {
+      b.classList.add('sel-wrong');
+      setTimeout(function () { b.classList.remove('sel-wrong'); }, 1000);
+      feed(c.fb || ('det = ' + line + ' &mdash; this machine keeps area. Not the flattener.'), 'warn');
+      return;
+    }
+    this.busy = true;
+    this.phase = 'done';
+    b.classList.add('sel-right');
+    stripEl.querySelectorAll('.cap10').forEach(function (x) { x.disabled = true; });
+    feed('det = ' + line + ' &mdash; watch what zero does.');
+    var self = this;
+    setTimeout(function () {
+      vg.setConfig({ showArea: true });
+      vgGo(mm);
+      setTimeout(function () {
+        self.busy = false;
+        ok('Flat: the whole picture lands on one line &mdash; and back in Step 5 you saw nothing brings it back.');
+        setButton('Finish the story', true, advance);
+      }, 1400);
+    }, 900);
+  }
+};
+
+/* ---------------- step 12 — connect (the finale) ---------------- */
+var step12 = {
+  enter: function () {
+    doneArr[11] = true;
+    renderDots();
+    vg.setConfig({ draggableI: false, draggableJ: false });
+    vgGo(IDENTITY);
+    setStepText('Step 12 · Connect', 'From two arrows to the whole machine.', null);
+    feed('');
+    landing.dataset.card = 'p2';
+    landing.innerHTML =
+      '<div class="endcard c2">' +
+      '<div class="eyebrow2">Step 12 &middot; Connect</div>' +
+      '<h2>You did all of this by hand</h2>' +
+      '<div class="recap2">' +
+      '<div class="rhead">The geometry you felt by hand</div><div class="rhead">The arithmetic you can now run</div>' +
+      '<div>A picture followed two draggable arrows; the matrix was just those two arrows written down.</div>' +
+      '<div><b>A·v</b> &mdash; <span class="ci">x copies of column 1</span> + <span class="cj">y copies of column 2</span></div>' +
+      '<div>Running two machines in a row made a new one, and order mattered.</div>' +
+      '<div><b>A·B</b> &mdash; push B&rsquo;s columns through A, one walk per column</div>' +
+      '<div>The yellow patch stretched, flipped, flattened.</div>' +
+      '<div><b>det = a·d &minus; b·c</b> &mdash; the area factor, sign and all</div>' +
+      '</div>' +
+      '<p>Every frame, a GPU runs that first row a few billion times &mdash; that is all &ldquo;3-D graphics&rdquo; is. ' +
+      'And one free theorem: (A·B)·C = A·(B·C), because both sides just say <i>&ldquo;run C, then B, then A&rdquo;</i> &mdash; nothing to prove.</p>' +
+      '<div class="tease" id="tease">' +
+      '<span class="tq">One question to take with you: a 3&thinsp;&times;&thinsp;3 machine moves 3-D space &mdash; what does <i>its</i> determinant measure?</span>' +
+      '<button class="btn-2nd" id="teaseBtn" type="button">Reveal</button>' +
+      '</div>' +
+      '<button class="btn-text" id="restartBtn" type="button">Play the whole lesson again</button>' +
+      '</div>';
+    landing.hidden = false;
+    $('teaseBtn').addEventListener('click', function () {
+      $('tease').innerHTML =
+        '<span class="tq"><b>Volume.</b> Same idea, one dimension up: how much a block of space swells or shrinks &mdash; and det&nbsp;0 still means &ldquo;flattened, no way back.&rdquo;</span>';
+    });
+    setButton('One last page', true, function () { step12.epilogue(); });
+  },
+
+  /* letter matrices (matHTML is numeric-only): r = 4 row-major [html, class] cells */
+  lm: function (r) {
+    return '<span class="evec"><span class="br l"></span><span class="eg two">' +
+      r.map(function (e) { return '<span class="' + (e[1] || '') + '">' + e[0] + '</span>'; }).join('') +
+      '</span><span class="br r"></span></span>';
+  },
+
+  /* ---------- epilogue card 1: the two formulas, one at a time ---------- */
+  epilogue: function () {
+    setStepText('Epilogue', 'You built both of these by hand &mdash; here they are, written down.', null);
+    feed('');
+    var A = this.lm([['a', ''], ['b', ''], ['c', ''], ['d', '']]);
+    var B = this.lm([['p', 'ci'], ['q', 'cj'], ['r', 'ci'], ['s', 'cj']]);
+    var AB = this.lm([
+      ['a·p&thinsp;+&thinsp;b·r', 'ci'], ['a·q&thinsp;+&thinsp;b·s', 'cj'],
+      ['c·p&thinsp;+&thinsp;d·r', 'ci'], ['c·q&thinsp;+&thinsp;d·s', 'cj']
+    ]);
+    var D = this.lm([['a', 'ci'], ['b', 'cj'], ['c', 'ci'], ['d', 'cj']]);
+    landing.innerHTML =
+      '<div class="endcard c2 epi">' +
+      '<div class="eyebrow2 fadeup">Epilogue</div>' +
+      '<h2 class="fadeup">Two lines to keep in your pocket</h2>' +
+      '<div class="eh fadeup" style="animation-delay:.35s">Multiplying two machines</div>' +
+      '<div class="eq fadeup" style="animation-delay:.35s">' + A + '<span class="op">·</span>' + B +
+      '<span class="eqgrp"><span class="op">=</span>' + AB + '</span></div>' +
+      '<div class="eqcap fadeup" style="animation-delay:.6s">No new rule here &mdash; <b class="ci">each column of B is just a point</b>, and a point rides through A the way every point did: ' +
+      '<b class="ci">p</b> copies of A&rsquo;s first column + <b class="ci">r</b> copies of its second. <b>The landings are the columns of A·B.</b></div>' +
+      '<div class="eh fadeup" style="animation-delay:1.6s">Measuring one machine</div>' +
+      '<div class="eq fadeup" style="animation-delay:1.6s"><span class="op">det</span>' + D +
+      '<span class="eqgrp"><span class="op">=</span><span class="ci">a</span><span class="op">·</span><span class="cj">d</span>' +
+      '<span class="op">&minus;</span><span class="cj">b</span><span class="op">·</span><span class="ci">c</span></span></div>' +
+      '<div class="eqcap fadeup" style="animation-delay:1.85s">Top-left &times; bottom-right, minus top-right &times; bottom-left. One number, three memories: ' +
+      '<b>how much area grows</b> &middot; <b>0 &mdash; flattened, no way back</b> &middot; <b>negative &mdash; flipped over</b>.</div>' +
+      '</div>';
+    setButton('One last story', true, function () { step12.epilogue2(); });
+  },
+
+  /* ---------- epilogue card 2: where the lines came from, then out ---------- */
+  epilogue2: function () {
+    setStepText('Epilogue', 'A 242-year story, in two paragraphs.', null);
+    landing.innerHTML =
+      '<div class="endcard c2 epi">' +
+      '<div class="eyebrow2 fadeup">Epilogue</div>' +
+      '<h2 class="fadeup">Where those two lines came from</h2>' +
+      '<p class="fadeup" style="animation-delay:.35s">The determinant is <b>older than the matrix</b>. Seki Takakazu in Japan (1683) and Leibniz in Germany (1693) ' +
+      'were computing a·d&thinsp;&minus;&thinsp;b·c long before anyone drew the grid it lives in. When James Joseph Sylvester finally boxed the four numbers up in 1850, ' +
+      'he named the box <i>matrix</i> &mdash; Latin for <i>womb</i> &mdash; the thing determinants are born from.</p>' +
+      '<p class="fadeup" style="animation-delay:1.6s">And the multiplication rule was never discovered &mdash; it was <b>chosen</b>. Arthur Cayley picked it in 1858 ' +
+      'precisely so that A·B would mean &ldquo;run B, then A&rdquo;, the composition you built in Step 9. For 67 years it looked like pure play. ' +
+      'Then Heisenberg found the quantum world written in matrices &mdash; where the order-matters fact you proved in Step 4 becomes the uncertainty principle itself.</p>' +
+      '<p class="close fadeup" style="animation-delay:2.9s">So if the symbols ever blur, do what you did here: draw two arrows, drag them, watch where they land. ' +
+      'A matrix is two landing spots written down &mdash; everything else follows.</p>' +
+      '</div>';
+    setButton('Play it all again', true, function () {
+      for (var i = 0; i < NSTEPS; i++) doneArr[i] = false;
+      enterStep(0);
+    });
+  }
+};
+
+/* ---------------- flow ---------------- */
+var steps = [step1, step2, step3, step4, step6, step7, step8, step9, step10compose, step5, step11formula, step12];
+
+/* the grid has ONE onChange slot and it belongs to the lesson engine. Steps
+   must NEVER write cfg.onChange — they receive state through their onState(s)
+   method via this dispatcher. (A step that nulls the slot silently deafens
+   every later step: that is exactly how Compose once broke Measure.) The
+   enterStep baseline re-installs it each step as a safety net. */
+function onStateDispatch(s) {
+  if (suppress) return;
+  if (steps[cur] && steps[cur].onState) steps[cur].onState(s);
+}
+
+function enterStep(i) {
+  if (steps[cur] && steps[cur].leave) steps[cur].leave();
+  cur = Math.min(i, steps.length - 1);
+  qwrap.hidden = true;
+  landing.hidden = true;
+  stripEl.hidden = true;
+  stripEl.textContent = '';
+  goBtn.style.display = '';
+  /* baseline the component so per-step configs stay minimal */
+  vg.clearWalk();
+  vg.overlay(null);
+  vg.setConfig({
+    range: 3.4, marker: null, showFace: true, face: null, facePaths: null,
+    showTips: false, showStaticGrid: true, showMoveGrid: true, onArrowTap: null, onGridTap: null,
+    onChange: onStateDispatch
+  });
+  renderDots();
+  steps[cur].enter();
+}
+
+/* the landing container hosts two different cards (step 6 Checkpoint and step 12
+   Connect), so the restart button is wired by delegation and the Part 1 card kept here */
+var PART1_END = landing.innerHTML;
+landing.addEventListener('click', function (e) {
+  var t = e.target;
+  while (t && t !== landing && t.id !== 'restartBtn') t = t.parentNode;
+  if (t && t.id === 'restartBtn') {
+    for (var i = 0; i < NSTEPS; i++) doneArr[i] = false;
+    enterStep(0);
+  }
+});
+
+var vg = createVectorGrid($('stage'), {
+  showMatrix: false, showLabels: false, showSnap: false,
+  onChange: onStateDispatch
+});
+
+/* debug hooks for automated visual tests. Keys are object identities, NOT
+   step positions — after the v4 reorder the display numbers are:
+   step5=Measure(#10), step6=Undo(#5), step8=Recipe(#7), step9=Multiply(#8),
+   step10compose=Compose(#9), step11formula=Formula(#11). Array index (0-based)
+   for go(i): Undo=4, Checkpoint=5, Recipe=6, Multiply=7, Compose=8, Measure=9,
+   Formula=10, Connect=11. */
+window.__lesson = { vg: vg, go: enterStep, s3: step3, s4: step4, s5: step5, s6: step6, s8: step8, s9: step9, s10: step10compose, s11: step11formula };
+
+enterStep(0);
+
+})();
+</script>
